@@ -1,0 +1,129 @@
+package OLC1PROYECTO2.Analizadores;
+import java_cup.runtime.Symbol; 
+import java.util.LinkedList;
+import OLC1PROYECTO2.Estructuras.Nodo;
+
+parser code{:
+
+    
+:}
+
+//------> Codigo para las acciones gramaticales
+action code
+{:  :}
+
+/*--------------- 2da Area: Declaraciones -----------------------*/
+
+//------> declaracion de terminales 
+
+terminal String INT,
+        DOUBLE,
+        BOOLEAN,
+        CHAR,
+        STRING,
+        IGUAL,
+        DIFERENCIA,
+        MENOR,
+        MENORIGUAL,
+        MAYOR,
+        MAYORIGUAL,
+        OR,
+        AND,
+        NOT,
+        SUMA,
+        RESTA,
+        MULT,
+        DIV,
+        POTE,
+        MODULO,
+        DOSPT,
+        FIN,
+        PTCOMA,
+        PT,
+        COMA,
+        LLAVEIZ,
+        LLAVEDER,
+        INTERR,
+        DIGITO,
+        SIGNO,
+        LETRA,
+        ESPACIO,
+        ESPECIAL,
+        ASIGNACION,
+        IDENTIFICADOR,
+        PARRAF,
+        COMENTARIO,
+        DECIMAL;
+
+//------> declaracion de no terminales
+non terminal Programa;
+non terminal Expresion;
+non terminal Declaracion;
+non terminal Operacion;
+non terminal Tipo;
+non terminal DeclaracionVariable;
+non terminal Operador;
+non terminal INSTRUCCION;
+non terminal INSTRUCCIONES;
+
+//------> precedencia
+precedence left OR;
+precedence left AND;
+precedence left IGUAL, DIFERENCIA;
+precedence left MENOR, MENORIGUAL, MAYOR, MAYORIGUAL;
+precedence left SUMA, RESTA;
+precedence left MULT, DIV;
+precedence right NOT;
+precedence right MODULO;
+precedence right POTE;
+
+start with Programa;
+
+Programa ::= INSTRUCCIONES;
+
+INSTRUCCIONES::= INSTRUCCIONES INSTRUCCION
+                | INSTRUCCION
+                ;
+INSTRUCCION::= Declaracion
+            ; 
+
+Declaracion ::= Tipo IDENTIFICADOR PTCOMA
+              | Tipo IDENTIFICADOR ASIGNACION Expresion PTCOMA
+              ;
+
+Tipo ::= INT
+       | DOUBLE
+       | BOOLEAN
+       | CHAR
+       | STRING
+       ;
+
+Expresion ::= DECIMAL
+            | PARRAF
+            | DIGITO
+            | Expresion Operador Expresion
+            | LLAVEIZ Expresion LLAVEDER
+            ;
+
+Operador ::= SUMA
+           | RESTA
+           | MULT
+           | DIV
+           | POTE
+           | MODULO
+           | IGUAL
+           | DIFERENCIA
+           | MENOR
+           | MENORIGUAL
+           | MAYOR
+           | MAYORIGUAL
+           | OR
+           | AND
+           | NOT
+           ;
+
+
+
+
+
+
