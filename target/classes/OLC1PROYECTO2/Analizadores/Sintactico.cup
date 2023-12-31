@@ -53,7 +53,8 @@ terminal String INT,
         IDENTIFICADOR,
         PARRAF,
         COMENTARIO,
-        DECIMAL;
+        DECIMAL,
+        CARACTERES;
 
 //------> declaracion de no terminales
 non terminal Programa;
@@ -101,6 +102,7 @@ Tipo ::= INT
 Expresion ::= DECIMAL
             | PARRAF
             | DIGITO
+            | CARACTERES
             | Expresion Operador Expresion
             | LLAVEIZ Expresion LLAVEDER
             ;

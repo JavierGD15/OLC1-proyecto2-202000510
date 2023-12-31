@@ -11,12 +11,14 @@ public class sym {
   public static final int PT = 25;
   public static final int ESPECIAL = 34;
   public static final int DIFERENCIA = 8;
+  public static final int RIMPRIMIR = 41;
   public static final int MULT = 18;
   public static final int CHAR = 5;
   public static final int LLAVEIZ = 27;
   public static final int DOUBLE = 3;
   public static final int RESTA = 17;
   public static final int LLAVEDER = 28;
+  public static final int CARACTERES = 40;
   public static final int INTERR = 29;
   public static final int INT = 2;
   public static final int DOSPT = 22;
@@ -31,7 +33,9 @@ public class sym {
   public static final int ESPACIO = 33;
   public static final int DIV = 19;
   public static final int SUMA = 16;
+  public static final int UMENOS = 44;
   public static final int MAYORIGUAL = 12;
+  public static final int PARIZQ = 42;
   public static final int DECIMAL = 39;
   public static final int EOF = 0;
   public static final int BOOLEAN = 4;
@@ -48,6 +52,7 @@ public class sym {
   public static final int SIGNO = 31;
   public static final int PTCOMA = 24;
   public static final int STRING = 6;
+  public static final int PARDER = 43;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -88,7 +93,12 @@ public class sym {
   "IDENTIFICADOR",
   "PARRAF",
   "COMENTARIO",
-  "DECIMAL"
+  "DECIMAL",
+  "CARACTERES",
+  "RIMPRIMIR",
+  "PARIZQ",
+  "PARDER",
+  "UMENOS"
   };
 }
 

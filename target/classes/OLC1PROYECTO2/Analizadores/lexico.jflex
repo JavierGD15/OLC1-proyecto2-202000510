@@ -90,6 +90,7 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 {IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
 "\" \"" {return new Symbol(sym.ESPACIO,yyline,yychar, yytext());}
 {TEXTO} {return new Symbol(sym.PARRAF,yyline,yychar, yytext());}
+{CARACTERES} {return new Symbol(sym.CARACTERES,yyline,yychar, yytext());}
 {BLANCOS} {}
 {ESPECIAL} {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
 

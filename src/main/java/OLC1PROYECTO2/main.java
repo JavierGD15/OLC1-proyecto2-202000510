@@ -5,12 +5,14 @@
  */
 package OLC1PROYECTO2;
 
+import OLC1PROYECTO2.Arbol.Tipo;
+
 /**
  *
  * @author javie
  */
 public class main {
     public static void main(String[] args) {
-        System.out.println("Hola mundo");
+        
     }
 }

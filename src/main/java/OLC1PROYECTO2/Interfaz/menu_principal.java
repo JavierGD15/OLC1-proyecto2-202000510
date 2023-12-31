@@ -5,12 +5,13 @@
  */
 package OLC1PROYECTO2.Interfaz;
 
-import OLC1PROYECTO2.Analizadores.Lexico;
-import OLC1PROYECTO2.Analizadores.Sintactico;
+
+import OLC1PROYECTO2.Arbol.Instrucciones;
+import OLC1PROYECTO2.Arbol.TablaDeSimbolos;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.LinkedList;
 
 /**
  *
@@ -146,23 +147,48 @@ public class menu_principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         try {
-            Sintactico sintactico = new Sintactico(new Lexico(new BufferedReader( new StringReader(jTextArea1.getText()))));
-            sintactico.parse(); 
-            
-            System.out.println("Todo Correcto ");
-            
-           
-            
-        }catch (Exception ex){
-             
-             System.out.println("ERRORES: "+ex);
-        }
+         interpretar(jTextArea1.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+    private static void interpretar(String path) {
+        OLC1PROYECTO2.Analizadores.Sintactico pars;
+        LinkedList<Instrucciones> AST_arbolSintaxisAbstracta=null;
+        try {
+            pars=new OLC1PROYECTO2.Analizadores.Sintactico(new OLC1PROYECTO2.Analizadores.Lexico(new BufferedReader( new StringReader(path))));
+            pars.parse();        
+            AST_arbolSintaxisAbstracta=pars.getAST();
+        } catch (Exception ex) {
+            System.out.println("Error fatal en compilación de entrada.");
+            System.out.println("datos: " +ex);
+        } 
+        ejecutarAST(AST_arbolSintaxisAbstracta);
+    }
     /**
-     * @param args the command line arguments
+     * Recibe una lista de instrucciones y la ejecuta
+     * @param ast lista de instrucciones
      */
+    private static void ejecutarAST(LinkedList<Instrucciones> ast) {
+        if(ast==null){
+            System.out.println("No es posible ejecutar las instrucciones porque\r\n"
+                    + "el árbol no fue cargado de forma adecuada por la existencia\r\n"
+                    + "de errores léxicos o sintácticos.");
+            return;
+        }
+        //Se crea una tabla de símbolos global para ejecutar las instrucciones.
+        TablaDeSimbolos ts=new TablaDeSimbolos();
+        //Se ejecuta cada instruccion en el ast, es decir, cada instruccion de 
+        //la lista principal de instrucciones.
+        for(Instrucciones ins:ast){
+            //Si existe un error léxico o sintáctico en cierta instrucción esta
+            //será inválida y se cargará como null, por lo tanto no deberá ejecutarse
+            //es por esto que se hace esta validación.
+            if(ins!=null)
+                ins.ejecutar(ts);
+        }
+    }
+    
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -210,6 +236,6 @@ public class menu_principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    public static javax.swing.JTextArea jTextArea2;
     // End of variables declaration//GEN-END:variables
 }

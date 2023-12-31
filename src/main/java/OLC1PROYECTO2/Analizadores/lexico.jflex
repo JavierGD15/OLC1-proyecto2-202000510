@@ -29,7 +29,8 @@ decimal = {D}+("."[  |0-9]+)?
 
 //4.4 SECUENCIAS DE ESCAPE
 TEXTO = \"(\\t|\\n|\\'|\\\"|\\\\|[^\\\"\n])*\"  // Para cadenas que incluyen escapes especiales y comillas dobles
-CARACTERES = \'(\\t|\\n|\\'|\\\"|\\\\|[^\\\'\n])\'    // Para caracteres literales
+CARACTERES = [\']((\\u[0-9A-Fa-f]{4})|[^\\\'\n]|(\\[\'\"tnr]))[\']// Para caracteres literales
+            
 ESPECIAL = (\\n|\\\'|\\\")
 IDENTIFICADOR = {L}({L}|{D})*
 
@@ -78,9 +79,12 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 "," {return new Symbol(sym.COMA,yyline,yychar, yytext());}
 "{" {return new Symbol(sym.LLAVEIZ,yyline,yychar, yytext());} 
 "}" {return new Symbol(sym.LLAVEDER,yyline,yychar, yytext());} 
-
+"(" {return new Symbol(sym.PARIZQ,yyline,yychar, yytext());} 
+")" {return new Symbol(sym.PARDER,yyline,yychar, yytext());} 
 "?" {return new Symbol(sym.INTERR,yyline,yychar, yytext());} 
 
+//acciones
+"imprimir" {return new Symbol(sym.RIMPRIMIR,yyline,yychar, yytext());} 
 
 \n {yychar=1;}
 
@@ -90,8 +94,11 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 {IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
 "\" \"" {return new Symbol(sym.ESPACIO,yyline,yychar, yytext());}
 {TEXTO} {return new Symbol(sym.PARRAF,yyline,yychar, yytext());}
+{CARACTERES} {return new Symbol(sym.CARACTERES,yyline,yychar, yytext());}
 {BLANCOS} {}
 {ESPECIAL} {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
+
+
 
 . {
     Errores err = new Errores(cont, "Léxico", "El caracter "+yytext()+" no pertenece al lenguaje", yyline, yychar);
