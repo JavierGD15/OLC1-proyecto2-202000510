@@ -56,11 +56,16 @@ public class Operacion extends Instrucciones {
      * @param operadorDer Opeardor derecho de la operación
      * @param tipo Tipo de la operación
      */
-    public Operacion(Operacion operadorIzq, Operacion operadorDer, Tipo_operacion tipo) {
+    
+
+    public Operacion(Operacion operadorIzq, Operacion operadorDer, Tipo_operacion tipo,int linea, int columna) {
+        super(linea, columna);
         this.tipo = tipo;
         this.operadorIzq = operadorIzq;
         this.operadorDer = operadorDer;
     }
+    
+    
 
     /**
      * Constructor para operaciones unarias (un operador), estas operaciones
@@ -69,8 +74,11 @@ public class Operacion extends Instrucciones {
      * @param operadorIzq Único operador de la operación
      * @param tipo Tipo de operación
      */
-    public Operacion(Operacion operadorIzq, Tipo_operacion tipo) {
-        this.tipo = tipo;
+   
+    
+     public Operacion(Operacion operadorIzq, Tipo_operacion tipo,int linea, int columna) {
+        super(linea, columna);
+          this.tipo = tipo;
         this.operadorIzq = operadorIzq;
     }
 
@@ -82,7 +90,9 @@ public class Operacion extends Instrucciones {
      * @param a Cadena que representa la operación a realizar
      * @param tipo Tipo de operación
      */
-    public Operacion(String a, Tipo_operacion tipo) {
+  
+    public Operacion(String a, Tipo_operacion tipo,int linea, int columna) {
+        super(linea, columna);
         this.valor = a;
         this.tipo = tipo;
     }
@@ -94,7 +104,9 @@ public class Operacion extends Instrucciones {
      *
      * @param a Valor de tipo Double que representa la operación a realizar.
      */
-    public Operacion(Double a) {
+   
+    public Operacion(Double a,int linea, int columna) {
+        super(linea, columna);
         this.valor = a;
         this.tipo = Tipo_operacion.NUMERO;
     }

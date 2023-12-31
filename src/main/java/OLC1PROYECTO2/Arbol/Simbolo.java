@@ -55,6 +55,16 @@ public class Simbolo {
         this.listaovector = listavector; // Igual para listaovector
     }
 
+    public Simbolo(Tipo tipo, String id, Object valor, int linea, int columna) {
+        this.tipo = tipo;
+        this.id = id;
+        this.valor = valor;
+        this.linea = linea;
+        this.columna = columna;
+    }
+    
+    
+
     // Getters y setters
 
     public String getId() {
@@ -112,5 +122,10 @@ public class Simbolo {
 
     public void setListaovector(Tipo listaovector) {
         this.listaovector = listaovector;
+    }
+
+    @Override
+    public String toString() {
+        return valor.toString();
     }
 }

@@ -68,9 +68,10 @@ INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
                 | INSTRUCCION :a{:RESULT=new LinkedList<>(); RESULT.add(a);:}
                 ;
 INSTRUCCION::= 
-              RIMPRIMIR    PARIZQ expresion_cadena:a PARDER PTCOMA                          {:RESULT=new Imprimir(a);:}
-             |tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:}
-             |tipo:a IDENTIFICADOR:b ASIGNACION expresion_cadena:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:}
+              RIMPRIMIR    PARIZQ expresion_cadena:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
+             |tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:} //declarar sin datos
+             |tipo:a IDENTIFICADOR:b ASIGNACION expresion_cadena:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+             |tipo:a IDENTIFICADOR:b ASIGNACION expresion_cadena:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
             ; 
 
 
@@ -82,33 +83,33 @@ tipo ::= INT  {:RESULT=Tipo.tipos.INT;:}
        ;
 
 expresion_numerica  ::= 
-    RESTA expresion_numerica:a                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.NEGATIVO);:}%prec UMENOS     
- |  expresion_numerica:a SUMA        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.SUMA);:}
- |  expresion_numerica:a RESTA      expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.RESTA);:}
- |  expresion_numerica:a MULT        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.MULTIPLICACION);:}
- |  expresion_numerica:a DIV   expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.DIVISION);:}
+    RESTA expresion_numerica:a                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.NEGATIVO,aleft,aright);:}%prec UMENOS     
+ |  expresion_numerica:a SUMA        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.SUMA,aleft,aright);:}
+ |  expresion_numerica:a RESTA      expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.RESTA,aleft,aright);:}
+ |  expresion_numerica:a MULT        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.MULTIPLICACION,aleft,aright);:}
+ |  expresion_numerica:a DIV   expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.DIVISION,aleft,aright);:}
  |  PARIZQ expresion_numerica:a PARDER                       {:RESULT=a;:}
- |  DIGITO:a                                                 {:RESULT=new Operacion(new Double(a));:}
- |  DECIMAL:a                                                {:RESULT=new Operacion(new Double(a));:}
- |  CARACTERES:a                                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CARACTER);:} 
- |  IDENTIFICADOR: a                                         {:RESULT=new Operacion(a,Operacion.Tipo_operacion.IDENTIFICADOR);:}
+ |  DIGITO:a                                                 {:RESULT=new Operacion(new Double(a),aleft,aright);:}
+ |  DECIMAL:a                                                {:RESULT=new Operacion(new Double(a),aleft,aright);:}
+ |  CARACTERES:a                                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CARACTER,aleft,aright);:} 
+ |  IDENTIFICADOR: a                                         {:RESULT=new Operacion(a,Operacion.Tipo_operacion.IDENTIFICADOR,aleft,aright);:}
 
 ;
 
 expresion_cadena::=
-    expresion_cadena:a SUMA expresion_cadena:b {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.CONCATENACION);:}
- |  PARRAF:a                                     {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CADENA);:}
+    expresion_cadena:a SUMA expresion_cadena:b {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.CONCATENACION,aleft,aright);:}
+ |  PARRAF:a                                     {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CADENA,aleft,aright);:}
  |  expresion_numerica:a                         {:RESULT=a;:}
  |  expresion_logica:a                         {:RESULT=a;:}  
 ;
 
 expresion_logica  ::= 
-   expresion_numerica:a  MAYOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYOR_QUE);:} 
- | expresion_numerica:a  MENOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENOR_QUE);:}  
- | expresion_numerica:a  IGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.IGUAL);:}  
- | expresion_numerica:a  DIFERENCIA   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.DIFERENCIA);:}  
- | expresion_numerica:a  MENORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENORIGUAL);:}  
- | expresion_numerica:a  MAYORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYORIGUAL);:}  
+   expresion_numerica:a  MAYOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYOR_QUE,aleft,aright);:} 
+ | expresion_numerica:a  MENOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENOR_QUE,aleft,aright);:}  
+ | expresion_numerica:a  IGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.IGUAL,aleft,aright);:}  
+ | expresion_numerica:a  DIFERENCIA   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.DIFERENCIA,aleft,aright);:}  
+ | expresion_numerica:a  MENORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENORIGUAL,aleft,aright);:}  
+ | expresion_numerica:a  MAYORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYORIGUAL,aleft,aright);:}  
  
 ;
 

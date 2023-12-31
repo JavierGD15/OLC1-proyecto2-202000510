@@ -41,16 +41,14 @@ public class Asignacion extends Instrucciones {
         }
         // Verificar coincidencia de tipos
         
-        else if (variable.getTipo().getTipos() != this.contenido.tipo.getTipos()) {
-            return new Errores(0, "Semántico", "Error en la declaracion de los tipos", this.linea, this.columna);
-        } else {
+         else {
             opcion = true;
         }
 
         if (!opcion) {
             return new Errores(0, "Semántico", "Error en la declaracion de los tipos", this.linea, this.columna);
         }
-
+        System.out.println(contenidoValor.toString());
         variable.setValor(contenidoValor);
         return variable;
     }

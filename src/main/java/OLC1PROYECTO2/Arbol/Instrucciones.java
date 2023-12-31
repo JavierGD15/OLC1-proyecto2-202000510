@@ -29,8 +29,13 @@ public abstract class Instrucciones {
         this.columna = columna;
     }
 
-    public Instrucciones() {
+    public Instrucciones(int linea, int columna) {
+        this.linea = linea;
+        this.columna = columna;
     }
+    
+
+   
     
   
     public abstract Object ejecutar(TablaDeSimbolos ts);

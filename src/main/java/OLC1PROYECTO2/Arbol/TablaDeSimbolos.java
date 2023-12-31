@@ -4,9 +4,11 @@
  * and open the template in the editor.
  */
 package OLC1PROYECTO2.Arbol;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
 /**
  *
  * @author javie
@@ -14,7 +16,7 @@ import java.util.Map;
 public class TablaDeSimbolos {
 
     private String nombreEntorno; // En Java, no es común usar 'String | any'
-    private Map<String, Simbolo> tabla;
+    private HashMap<String, Simbolo> tabla;
     private TablaDeSimbolos anterior; // TABLA DE SÍMBOLOS ANTERIOR
     private Tipo tipo; // Asumiendo que la clase Tipo está definida
 
@@ -25,26 +27,29 @@ public class TablaDeSimbolos {
     }
 
     public TablaDeSimbolos() {
+        this.tabla = new HashMap<>();
     }
-    
 
     public boolean setVariable(Simbolo simbolo) {
         
-        for(TablaDeSimbolos e = this; e != null; e = e.getAnterior()) {
-          
-            Simbolo encontro = e.getTabla().get(simbolo.getId());
-            if(encontro != null) {
-                return false;
+        for (TablaDeSimbolos e = this; e != null; e = e.getAnterior()) {
+            HashMap<String, Simbolo> tablaActual = e.getTable();
+            if (tablaActual != null) {
+                Simbolo encontrado = tablaActual.get(simbolo.getId());
+                if (encontrado != null) {
+                    return false;
+                }
             }
             break;
         }
+       System.out.println(simbolo.toString());
         this.tabla.put(simbolo.getId(), simbolo);
         return true;
     }
 
     public Simbolo getVariable(String identificador) {
         for (TablaDeSimbolos e = this; e != null; e = e.getAnterior()) {
-            Simbolo encontrado = e.tabla.get(identificador);
+            Simbolo encontrado = e.getTable().get(identificador);
             if (encontrado != null) {
                 return encontrado;
             }
@@ -52,11 +57,11 @@ public class TablaDeSimbolos {
         return null;
     }
 
-    public Map<String, Simbolo> getTabla() {
+    public HashMap<String, Simbolo> getTable() {
         return this.tabla;
     }
 
-    public void setTabla(Map<String, Simbolo> tabla) {
+    public void setTable(HashMap<String, Simbolo> tabla) {
         this.tabla = tabla;
     }
 
@@ -68,4 +73,3 @@ public class TablaDeSimbolos {
         this.anterior = anterior;
     }
 }
-
