@@ -1,5 +1,5 @@
 package OLC1PROYECTO2.Analizadores;
-import OLC1PROYECTO2.Estructuras.Errores;
+import OLC1PROYECTO2.Estructuras.Excepcion;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 %unicode
 %ignorecase
 %{
-    public List<Errores> Errors = new ArrayList<>();
+    public List<Excepcion> Errors = new ArrayList<>();
     public int cont = 1;
 %}
 
@@ -84,7 +84,8 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 "?" {return new Symbol(sym.INTERR,yyline,yychar, yytext());} 
 
 //acciones
-"imprimir" {return new Symbol(sym.RIMPRIMIR,yyline,yychar, yytext());} 
+"imprimir" {return new Symbol(sym.RIMPRIMIR,yyline,yychar, yytext());}
+true|false {return new Symbol(sym.BOOL,yyline,yychar, yytext());}            
 
 \n {yychar=1;}
 
@@ -101,8 +102,7 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 
 
 . {
-    Errores err = new Errores(cont, "Léxico", "El caracter "+yytext()+" no pertenece al lenguaje", yyline, yychar);
+    Errors.add(new Excepcion("Léxico", "El caracter "+yytext()+" no pertenece al lenguaje", yyline, yychar));
+    
     cont++;
-    System.out.println(err.toString());
-    Errors.add(err);
 }

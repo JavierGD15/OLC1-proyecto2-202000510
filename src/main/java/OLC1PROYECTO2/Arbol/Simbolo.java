@@ -14,7 +14,7 @@ public class Simbolo {
     private Tipo tipo;
     private String id;
     private Object valor; // En Java, 'any' se traduce mejor como 'Object'
-    private Integer parametros; // Usamos Integer para permitir null
+    private int parametros; // Usamos Integer para permitir null
     private int linea;
     private int columna;
     private Tipo listaovector; // Suponiendo que listaovector puede ser nulo
@@ -55,18 +55,7 @@ public class Simbolo {
         this.listaovector = listavector; // Igual para listaovector
     }
 
-    public Simbolo(Tipo tipo, String id, Object valor, int linea, int columna) {
-        this.tipo = tipo;
-        this.id = id;
-        this.valor = valor;
-        this.linea = linea;
-        this.columna = columna;
-    }
-    
-    
-
-    // Getters y setters
-
+  
     public String getId() {
         return id;
     }
@@ -124,8 +113,5 @@ public class Simbolo {
         this.listaovector = listaovector;
     }
 
-    @Override
-    public String toString() {
-        return valor.toString();
-    }
+    
 }

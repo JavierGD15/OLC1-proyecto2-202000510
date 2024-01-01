@@ -1,5 +1,5 @@
 package OLC1PROYECTO2.Analizadores;
-import OLC1PROYECTO2.Estructuras.Errores;
+import OLC1PROYECTO2.Estructuras.Excepcion;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 %unicode
 %ignorecase
 %{
-    public List<Errores> Errors = new ArrayList<>();
+    public List<Excepcion> Errors = new ArrayList<>();
     public int cont = 1;
 %}
 
@@ -29,7 +29,8 @@ decimal = {D}+("."[  |0-9]+)?
 
 //4.4 SECUENCIAS DE ESCAPE
 TEXTO = \"(\\t|\\n|\\'|\\\"|\\\\|[^\\\"\n])*\"  // Para cadenas que incluyen escapes especiales y comillas dobles
-CARACTERES = \'(\\t|\\n|\\'|\\\"|\\\\|[^\\\'\n])\'    // Para caracteres literales
+CARACTERES = [\']((\\u[0-9A-Fa-f]{4})|[^\\\'\n]|(\\[\'\"tnr]))[\']// Para caracteres literales
+            
 ESPECIAL = (\\n|\\\'|\\\")
 IDENTIFICADOR = {L}({L}|{D})*
 
@@ -78,9 +79,13 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 "," {return new Symbol(sym.COMA,yyline,yychar, yytext());}
 "{" {return new Symbol(sym.LLAVEIZ,yyline,yychar, yytext());} 
 "}" {return new Symbol(sym.LLAVEDER,yyline,yychar, yytext());} 
-
+"(" {return new Symbol(sym.PARIZQ,yyline,yychar, yytext());} 
+")" {return new Symbol(sym.PARDER,yyline,yychar, yytext());} 
 "?" {return new Symbol(sym.INTERR,yyline,yychar, yytext());} 
 
+//acciones
+"imprimir" {return new Symbol(sym.RIMPRIMIR,yyline,yychar, yytext());}
+true|false {return new Symbol(sym.BOOL,yyline,yychar, yytext());}            
 
 \n {yychar=1;}
 
@@ -94,9 +99,10 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 {BLANCOS} {}
 {ESPECIAL} {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
 
+
+
 . {
-    Errores err = new Errores(cont, "Léxico", "El caracter "+yytext()+" no pertenece al lenguaje", yyline, yychar);
+    Errors.add(new Excepcion("Léxico", "El caracter "+yytext()+" no pertenece al lenguaje", yyline, yychar));
+    
     cont++;
-    System.out.println(err.toString());
-    Errors.add(err);
 }

@@ -1,71 +1,55 @@
 package OLC1PROYECTO2.Analizadores;
 import java_cup.runtime.Symbol; 
 import java.util.LinkedList;
-import OLC1PROYECTO2.Estructuras.Nodo;
+import OLC1PROYECTO2.Arbol.Declaracion;
+import OLC1PROYECTO2.Arbol.Instrucciones; 
+import OLC1PROYECTO2.Arbol.Imprimir; 
+import OLC1PROYECTO2.Arbol.Tipo;
+import OLC1PROYECTO2.Arbol.DeclaracionFunciones; 
+import OLC1PROYECTO2.Arbol.LlamadaFunciones; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
 
 parser code{:
-
+    
+    public LinkedList<Instrucciones> AST;
+  
+    public void syntax_error(Symbol s){ 
+            System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+            System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido."); 
+    }  
+    public LinkedList<Instrucciones> getAST() {
+        return AST;
+    }
     
 :}
 
-//------> Codigo para las acciones gramaticales
-action code
-{:  :}
 
 /*--------------- 2da Area: Declaraciones -----------------------*/
 
 //------> declaracion de terminales 
 
-terminal String INT,
-        DOUBLE,
-        BOOLEAN,
-        CHAR,
-        STRING,
-        IGUAL,
-        DIFERENCIA,
-        MENOR,
-        MENORIGUAL,
-        MAYOR,
-        MAYORIGUAL,
-        OR,
-        AND,
-        NOT,
-        SUMA,
-        RESTA,
-        MULT,
-        DIV,
-        POTE,
-        MODULO,
-        DOSPT,
-        FIN,
-        PTCOMA,
-        PT,
-        COMA,
-        LLAVEIZ,
-        LLAVEDER,
-        INTERR,
-        DIGITO,
-        SIGNO,
-        LETRA,
-        ESPACIO,
-        ESPECIAL,
-        ASIGNACION,
-        IDENTIFICADOR,
-        PARRAF,
-        COMENTARIO,
-        DECIMAL,
-        CARACTERES;
+terminal String INT,DOUBLE,BOOLEAN, CHAR,STRING, IGUAL, DIFERENCIA, MENOR, MENORIGUAL,
+        MAYOR,  MAYORIGUAL,  OR, AND, NOT, SUMA, RESTA, MULT, DIV, POTE, MODULO,
+        DOSPT, FIN, PTCOMA, PT, COMA, LLAVEIZ, LLAVEDER,INTERR,  DIGITO, SIGNO,
+        LETRA, ESPACIO, ESPECIAL, ASIGNACION, IDENTIFICADOR, PARRAF, COMENTARIO,
+        DECIMAL, CARACTERES, RIMPRIMIR, PARIZQ,PARDER,UMENOS, BOOL;
 
 //------> declaracion de no terminales
 non terminal Programa;
-non terminal Expresion;
-non terminal Declaracion;
-non terminal Operacion;
-non terminal Tipo;
-non terminal DeclaracionVariable;
-non terminal Operador;
-non terminal INSTRUCCION;
-non terminal INSTRUCCIONES;
+
+non terminal  Instrucciones EXPRESION;
+non terminal DECLARACIONFUNCIONES;
+non terminal Operacion expresion_numerica;
+non terminal LinkedList<Instruccion> else_ifs;
+non terminal Operacion expresion_cadena;
+non terminal Operacion expresion_logica;
+
+non terminal Tipo.tipos tipo;
+non terminal Instrucciones INSTRUCCION;
+non terminal LinkedList<Instrucciones> INSTRUCCIONES;
 
 //------> precedencia
 precedence left OR;
@@ -77,52 +61,46 @@ precedence left MULT, DIV;
 precedence right NOT;
 precedence right MODULO;
 precedence right POTE;
+precedence right UMENOS; 
 
 start with Programa;
 
-Programa ::= INSTRUCCIONES;
+Programa ::= INSTRUCCIONES:a  {:
+   
+    parser.AST=a;
+:};
 
-INSTRUCCIONES::= INSTRUCCIONES INSTRUCCION
-                | INSTRUCCION
+INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
+                | INSTRUCCION :a{:RESULT=new LinkedList<>(); RESULT.add(a);:}
                 ;
-INSTRUCCION::= Declaracion
+INSTRUCCION::= 
+             RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
+             //|tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:} //declarar sin datos
+             //|tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+             //|DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
             ; 
 
-Declaracion ::= Tipo IDENTIFICADOR PTCOMA
-              | Tipo IDENTIFICADOR ASIGNACION Expresion PTCOMA
-              ;
 
-Tipo ::= INT
-       | DOUBLE
-       | BOOLEAN
-       | CHAR
-       | STRING
+
+EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}
+|  DIGITO:a                                                     {:RESULT=new Primitivo(Tipo.tipos.INT,a,aleft,aright);:}
+|  DECIMAL:a                                                    {:RESULT=new Primitivo(Tipo.tipos.DOUBLE,a,aleft,aright);:}
+|  CARACTERES:a                                                 {:RESULT=new Primitivo(Tipo.tipos.CHAR,a,aleft,aright);:}
+|  IDENTIFICADOR: a                                             
+|  PARRAF: a                                                    {:RESULT=new Primitivo(Tipo.tipos.STRING,a,aleft,aright);:}
+|  BOOL: a                                                      {:RESULT=new Primitivo(Tipo.tipos.BOOLEAN,a,aleft,aright);:}
+
+;
+
+
+tipo ::= INT  {:RESULT=Tipo.tipos.INT;:}
+       | DOUBLE  {:RESULT=Tipo.tipos.DOUBLE;:}
+       | BOOLEAN  {:RESULT=Tipo.tipos.BOOLEAN;:}
+       | CHAR  {:RESULT=Tipo.tipos.CHAR;:}
+       | STRING  {:RESULT=Tipo.tipos.STRING;:}
        ;
 
-Expresion ::= DECIMAL
-            | PARRAF
-            | DIGITO
-            | CARACTERES
-            | Expresion Operador Expresion
-            | LLAVEIZ Expresion LLAVEDER
-            ;
 
-Operador ::= SUMA
-           | RESTA
-           | MULT
-           | DIV
-           | POTE
-           | MODULO
-           | IGUAL
-           | DIFERENCIA
-           | MENOR
-           | MENORIGUAL
-           | MAYOR
-           | MAYORIGUAL
-           | OR
-           | AND
-           | NOT
-           ;
 
 
 

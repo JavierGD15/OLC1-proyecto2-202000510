@@ -1,12 +1,14 @@
 package OLC1PROYECTO2.Analizadores;
 import java_cup.runtime.Symbol; 
 import java.util.LinkedList;
-import OLC1PROYECTO2.Estructuras.Nodo;
 import OLC1PROYECTO2.Arbol.Declaracion;
 import OLC1PROYECTO2.Arbol.Instrucciones; 
 import OLC1PROYECTO2.Arbol.Imprimir; 
 import OLC1PROYECTO2.Arbol.Tipo;
-import OLC1PROYECTO2.Arbol.Operacion; 
+import OLC1PROYECTO2.Arbol.DeclaracionFunciones; 
+import OLC1PROYECTO2.Arbol.LlamadaFunciones; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
 
 parser code{:
     
@@ -33,10 +35,13 @@ terminal String INT,DOUBLE,BOOLEAN, CHAR,STRING, IGUAL, DIFERENCIA, MENOR, MENOR
         MAYOR,  MAYORIGUAL,  OR, AND, NOT, SUMA, RESTA, MULT, DIV, POTE, MODULO,
         DOSPT, FIN, PTCOMA, PT, COMA, LLAVEIZ, LLAVEDER,INTERR,  DIGITO, SIGNO,
         LETRA, ESPACIO, ESPECIAL, ASIGNACION, IDENTIFICADOR, PARRAF, COMENTARIO,
-        DECIMAL, CARACTERES, RIMPRIMIR, PARIZQ,PARDER,UMENOS;
+        DECIMAL, CARACTERES, RIMPRIMIR, PARIZQ,PARDER,UMENOS, BOOL;
 
 //------> declaracion de no terminales
 non terminal Programa;
+
+non terminal  Instrucciones EXPRESION;
+non terminal DECLARACIONFUNCIONES;
 non terminal Operacion expresion_numerica;
 non terminal LinkedList<Instruccion> else_ifs;
 non terminal Operacion expresion_cadena;
@@ -60,7 +65,8 @@ precedence right UMENOS;
 
 start with Programa;
 
-Programa ::= INSTRUCCIONES :a{:
+Programa ::= INSTRUCCIONES:a  {:
+   
     parser.AST=a;
 :};
 
@@ -68,11 +74,23 @@ INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
                 | INSTRUCCION :a{:RESULT=new LinkedList<>(); RESULT.add(a);:}
                 ;
 INSTRUCCION::= 
-              RIMPRIMIR    PARIZQ expresion_cadena:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
-             |tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:} //declarar sin datos
-             |tipo:a IDENTIFICADOR:b ASIGNACION expresion_cadena:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
-             |tipo:a IDENTIFICADOR:b ASIGNACION expresion_cadena:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+             RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
+             //|tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:} //declarar sin datos
+             //|tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+             //|DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
             ; 
+
+
+
+EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}
+|  DIGITO:a                                                     {:RESULT=new Primitivo(Tipo.tipos.INT,a,aleft,aright);:}
+|  DECIMAL:a                                                    {:RESULT=new Primitivo(Tipo.tipos.DOUBLE,a,aleft,aright);:}
+|  CARACTERES:a                                                 {:RESULT=new Primitivo(Tipo.tipos.CHAR,a,aleft,aright);:}
+|  IDENTIFICADOR: a                                             
+|  PARRAF: a                                                    {:RESULT=new Primitivo(Tipo.tipos.STRING,a,aleft,aright);:}
+|  BOOL: a                                                      {:RESULT=new Primitivo(Tipo.tipos.BOOLEAN,a,aleft,aright);:}
+
+;
 
 
 tipo ::= INT  {:RESULT=Tipo.tipos.INT;:}
@@ -82,36 +100,7 @@ tipo ::= INT  {:RESULT=Tipo.tipos.INT;:}
        | STRING  {:RESULT=Tipo.tipos.STRING;:}
        ;
 
-expresion_numerica  ::= 
-    RESTA expresion_numerica:a                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.NEGATIVO,aleft,aright);:}%prec UMENOS     
- |  expresion_numerica:a SUMA        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.SUMA,aleft,aright);:}
- |  expresion_numerica:a RESTA      expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.RESTA,aleft,aright);:}
- |  expresion_numerica:a MULT        expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.MULTIPLICACION,aleft,aright);:}
- |  expresion_numerica:a DIV   expresion_numerica:b     {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.DIVISION,aleft,aright);:}
- |  PARIZQ expresion_numerica:a PARDER                       {:RESULT=a;:}
- |  DIGITO:a                                                 {:RESULT=new Operacion(new Double(a),aleft,aright);:}
- |  DECIMAL:a                                                {:RESULT=new Operacion(new Double(a),aleft,aright);:}
- |  CARACTERES:a                                               {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CARACTER,aleft,aright);:} 
- |  IDENTIFICADOR: a                                         {:RESULT=new Operacion(a,Operacion.Tipo_operacion.IDENTIFICADOR,aleft,aright);:}
 
-;
-
-expresion_cadena::=
-    expresion_cadena:a SUMA expresion_cadena:b {:RESULT=new Operacion(a,b,Operacion.Tipo_operacion.CONCATENACION,aleft,aright);:}
- |  PARRAF:a                                     {:RESULT=new Operacion(a,Operacion.Tipo_operacion.CADENA,aleft,aright);:}
- |  expresion_numerica:a                         {:RESULT=a;:}
- |  expresion_logica:a                         {:RESULT=a;:}  
-;
-
-expresion_logica  ::= 
-   expresion_numerica:a  MAYOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYOR_QUE,aleft,aright);:} 
- | expresion_numerica:a  MENOR   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENOR_QUE,aleft,aright);:}  
- | expresion_numerica:a  IGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.IGUAL,aleft,aright);:}  
- | expresion_numerica:a  DIFERENCIA   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.DIFERENCIA,aleft,aright);:}  
- | expresion_numerica:a  MENORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MENORIGUAL,aleft,aright);:}  
- | expresion_numerica:a  MAYORIGUAL   expresion_numerica:b{:RESULT=new Operacion(a,b, Operacion.Tipo_operacion.MAYORIGUAL,aleft,aright);:}  
- 
-;
 
 
 

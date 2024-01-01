@@ -30,6 +30,7 @@ public class sym {
   public static final int IGUAL = 7;
   public static final int LETRA = 32;
   public static final int OR = 13;
+  public static final int BOOL = 45;
   public static final int ESPACIO = 33;
   public static final int DIV = 19;
   public static final int SUMA = 16;
@@ -98,7 +99,8 @@ public class sym {
   "RIMPRIMIR",
   "PARIZQ",
   "PARDER",
-  "UMENOS"
+  "UMENOS",
+  "BOOL"
   };
 }
 

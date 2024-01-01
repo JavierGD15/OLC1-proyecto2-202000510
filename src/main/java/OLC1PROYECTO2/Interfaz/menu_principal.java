@@ -5,9 +5,9 @@
  */
 package OLC1PROYECTO2.Interfaz;
 
-
 import OLC1PROYECTO2.Arbol.Instrucciones;
 import OLC1PROYECTO2.Arbol.TablaDeSimbolos;
+import OLC1PROYECTO2.Estructuras.Arbol;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.StringReader;
@@ -147,48 +147,52 @@ public class menu_principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         interpretar(jTextArea1.getText());
+        interpretar(jTextArea1.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    
     private static void interpretar(String path) {
         OLC1PROYECTO2.Analizadores.Sintactico pars;
-        LinkedList<Instrucciones> AST_arbolSintaxisAbstracta=null;
+        LinkedList<Instrucciones> AST_arbolSintaxisAbstracta = new LinkedList<>();
         try {
-            pars=new OLC1PROYECTO2.Analizadores.Sintactico(new OLC1PROYECTO2.Analizadores.Lexico(new BufferedReader( new StringReader(path))));
-            pars.parse();        
-            AST_arbolSintaxisAbstracta=pars.getAST();
+            pars = new OLC1PROYECTO2.Analizadores.Sintactico(new OLC1PROYECTO2.Analizadores.Lexico(new BufferedReader(new StringReader(path))));
+            pars.parse();
+            AST_arbolSintaxisAbstracta = pars.getAST();
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");
-            System.out.println("datos: " +ex);
-        } 
+            System.out.println("datos: " + ex);
+        }
         ejecutarAST(AST_arbolSintaxisAbstracta);
     }
+
     /**
      * Recibe una lista de instrucciones y la ejecuta
+     *
      * @param ast lista de instrucciones
      */
     private static void ejecutarAST(LinkedList<Instrucciones> ast) {
-        if(ast==null){
+        if (ast == null) {
             System.out.println("No es posible ejecutar las instrucciones porque\r\n"
                     + "el árbol no fue cargado de forma adecuada por la existencia\r\n"
                     + "de errores léxicos o sintácticos.");
             return;
         }
         //Se crea una tabla de símbolos global para ejecutar las instrucciones.
-        TablaDeSimbolos ts=new TablaDeSimbolos();
+        TablaDeSimbolos ts = new TablaDeSimbolos();
+        Arbol tree = new Arbol(ast);
+        
         //Se ejecuta cada instruccion en el ast, es decir, cada instruccion de 
         //la lista principal de instrucciones.
-        for(Instrucciones ins:ast){
+        for (Instrucciones ins : ast) {
             //Si existe un error léxico o sintáctico en cierta instrucción esta
             //será inválida y se cargará como null, por lo tanto no deberá ejecutarse
             //es por esto que se hace esta validación.
-            if(ins!=null)
-                ins.ejecutar(ts);
+            
+            if (ins != null) {
+                ins.ejecutar(tree,ts);
+            }
         }
     }
-    
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

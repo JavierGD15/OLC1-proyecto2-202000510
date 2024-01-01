@@ -15,15 +15,15 @@ import java.util.Map;
  */
 public class TablaDeSimbolos {
 
-    private String nombreEntorno; // En Java, no es común usar 'String | any'
-    private HashMap<String, Simbolo> tabla;
+    public String nombreEntorno; // En Java, no es común usar 'String | any'
+    public HashMap<String, Simbolo> tabla;
     private TablaDeSimbolos anterior; // TABLA DE SÍMBOLOS ANTERIOR
     private Tipo tipo; // Asumiendo que la clase Tipo está definida
 
     public TablaDeSimbolos(TablaDeSimbolos anterior) {
         this.anterior = anterior;
         this.tabla = new HashMap<>();
-        this.tipo = new Tipo(Tipo.tipos.INT); // Asumiendo que Tipos es un enum y Tipo tiene este constructor
+        this.tipo = new Tipo(Tipo.tipos.INT);
     }
 
     public TablaDeSimbolos() {
@@ -31,7 +31,7 @@ public class TablaDeSimbolos {
     }
 
     public boolean setVariable(Simbolo simbolo) {
-        
+
         for (TablaDeSimbolos e = this; e != null; e = e.getAnterior()) {
             HashMap<String, Simbolo> tablaActual = e.getTable();
             if (tablaActual != null) {
@@ -42,7 +42,7 @@ public class TablaDeSimbolos {
             }
             break;
         }
-       System.out.println(simbolo.toString());
+
         this.tabla.put(simbolo.getId(), simbolo);
         return true;
     }
@@ -72,4 +72,13 @@ public class TablaDeSimbolos {
     public void setAnterior(TablaDeSimbolos anterior) {
         this.anterior = anterior;
     }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
 }
