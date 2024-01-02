@@ -44,6 +44,10 @@ public abstract class Instrucciones {
         return tipo;
     }
 
+    public Tipo getVectorLista() {
+        return vectorLista;
+    }
+
     
     
     

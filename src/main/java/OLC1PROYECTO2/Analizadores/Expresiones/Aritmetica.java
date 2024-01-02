@@ -78,6 +78,7 @@ public class Aritmetica extends Instrucciones {
         Object izquierdo = null, derecho = null, unario = null;
 
         if (this.opU == null) {
+            System.out.println(this.op1);
             izquierdo = this.op1.ejecutar(tree, table);
             if (izquierdo instanceof Excepcion) {
                 return izquierdo;

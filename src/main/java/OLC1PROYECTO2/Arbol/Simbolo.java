@@ -11,7 +11,7 @@ package OLC1PROYECTO2.Arbol;
  */
 public class Simbolo {
 
-    private Tipo tipo;
+    private Tipo.tipos tipo;
     private String id;
     private Object valor; // En Java, 'any' se traduce mejor como 'Object'
     private int parametros; // Usamos Integer para permitir null
@@ -19,7 +19,7 @@ public class Simbolo {
     private int columna;
     private Tipo listaovector; // Suponiendo que listaovector puede ser nulo
 
-    public Simbolo(Tipo tipo, String id, int linea, int columna, Object valor, Integer parametros, Tipo listavector) {
+    public Simbolo(Tipo.tipos tipo, String id, int linea, int columna, Object valor, Integer parametros, Tipo listavector) {
         this.linea = linea;
         this.columna = columna;
         this.tipo = tipo;
@@ -29,7 +29,7 @@ public class Simbolo {
             this.valor = valor;
         } else {
             // Establecer valor por defecto según el tipo
-            switch (this.tipo.getTipos()) {
+            switch (this.tipo) {
                 case INT:
                     this.valor = 0;
                     break;
@@ -54,10 +54,47 @@ public class Simbolo {
         this.parametros = parametros; // Java maneja 'null' directamente
         this.listaovector = listavector; // Igual para listaovector
     }
-    
-    
 
-  
+    public Simbolo(Tipo.tipos tipo, String id, int linea, int columna, Object valor) {
+        this.linea = linea;
+        this.columna = columna;
+        this.tipo = tipo;
+        this.id = id;
+
+        this.valor = valor;
+
+    }
+
+    public Simbolo(Tipo.tipos tipo, String id, int linea, int columna) {
+        this.linea = linea;
+        this.columna = columna;
+        this.tipo = tipo;
+        this.id = id;
+
+        // Establecer valor por defecto según el tipo
+        switch (this.tipo) {
+            case INT:
+                this.valor = 0;
+                break;
+            case DOUBLE:
+                this.valor = 0.0;
+                break;
+            case BOOLEAN:
+                this.valor = false;
+                break;
+            case CHAR:
+                this.valor = '\u0000'; // Carácter nulo
+                break;
+            case STRING:
+                this.valor = "";
+                break;
+            default:
+                this.valor = null; // o cualquier valor por defecto
+                break;
+        }
+
+    }
+
     public String getId() {
         return id;
     }
@@ -65,13 +102,12 @@ public class Simbolo {
     public void setId(String id) {
         this.id = id;
     }
-    
 
-    public Tipo getTipo() {
+    public Tipo.tipos getTipo() {
         return tipo;
     }
 
-    public void setTipo(Tipo tipo) {
+    public void setTipo(Tipo.tipos tipo) {
         this.tipo = tipo;
     }
 
@@ -115,5 +151,4 @@ public class Simbolo {
         this.listaovector = listaovector;
     }
 
-    
 }

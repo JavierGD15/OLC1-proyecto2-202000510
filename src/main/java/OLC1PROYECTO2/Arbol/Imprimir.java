@@ -42,7 +42,6 @@ public class Imprimir extends Instrucciones {
 
             menu_principal.jTextArea2.setText(menu_principal.jTextArea2.getText() + "\n" + value.toString() + "\n");
         }
-        System.out.println(value.toString() + "\n");
         return null;
     }
 

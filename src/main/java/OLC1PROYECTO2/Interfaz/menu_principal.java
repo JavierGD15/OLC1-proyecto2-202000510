@@ -156,7 +156,7 @@ public class menu_principal extends javax.swing.JFrame {
         try {
             pars = new OLC1PROYECTO2.Analizadores.Sintactico(new OLC1PROYECTO2.Analizadores.Lexico(new BufferedReader(new StringReader(path))));
             pars.parse();
-            System.out.println(pars);
+            System.out.println(pars.getAST().size());
             AST_arbolSintaxisAbstracta = pars.getAST();
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");

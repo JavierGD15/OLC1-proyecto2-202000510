@@ -11,6 +11,7 @@ import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica;
 import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Relacional; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Logica; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Variable; 
 
 parser code{:
     
@@ -41,9 +42,10 @@ terminal String INT,DOUBLE,BOOLEAN, CHAR,STRING, IGUAL, DIFERENCIA, MENOR, MENOR
 
 //------> declaracion de no terminales
 non terminal Programa;
-
-non terminal  Instrucciones EXPRESION;
-non terminal DECLARACIONFUNCIONES;
+non terminal Instrucciones DEFPRINT;
+non terminal Instrucciones DECLARACION;
+non terminal Instrucciones EXPRESION;
+non terminal Instrucciones DECLARACIONFUNCIONES;
 non terminal Operacion expresion_numerica;
 non terminal LinkedList<Instruccion> else_ifs;
 non terminal Operacion expresion_cadena;
@@ -76,13 +78,18 @@ INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
                 | INSTRUCCION :a{:RESULT=new LinkedList<>(); RESULT.add(a);:}
                 ;
 INSTRUCCION::= 
-             RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
-             |tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright);:} //declarar sin datos
-             |tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
-             //|DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
+             DEFPRINT:a {:RESULT=a;:}
+            |DECLARACION:a {:RESULT=a;:}
+            |DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
             ; 
+DEFPRINT::=
+RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
+;
 
-
+DECLARACION ::= 
+              tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright);:} //declarar sin datos
+             |tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+;
 
 EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}
 |  EXPRESION:a RESTA EXPRESION:b                                {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.RESTA,aleft,aright,a,b);:}
@@ -93,7 +100,7 @@ EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Ari
 |  DIGITO:a                                                     {:RESULT=new Primitivo(Tipo.tipos.INT,a,aleft,aright);:}
 |  DECIMAL:a                                                    {:RESULT=new Primitivo(Tipo.tipos.DOUBLE,a,aleft,aright);:}
 |  CARACTERES:a                                                 {:RESULT=new Primitivo(Tipo.tipos.CHAR,a,aleft,aright);:}
-|  IDENTIFICADOR: a                                             
+|  IDENTIFICADOR:a                                              {:RESULT=new Variable(aleft,aright, a.toLowerCase());:}
 |  PARRAF: a                                                    {:RESULT=new Primitivo(Tipo.tipos.STRING,a,aleft,aright);:}
 |  BOOL: a                                                      {:RESULT=new Primitivo(Tipo.tipos.BOOLEAN,a,aleft,aright);:}
 |  PARIZQ EXPRESION:a  PARDER                                   {:RESULT=a;:}  

@@ -42,7 +42,6 @@ public class TablaDeSimbolos {
             }
             break;
         }
-
         this.tabla.put(simbolo.getId(), simbolo);
         return true;
     }
