@@ -9,6 +9,8 @@ import OLC1PROYECTO2.Arbol.DeclaracionFunciones;
 import OLC1PROYECTO2.Arbol.LlamadaFunciones; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Relacional; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Logica; 
 
 parser code{:
     
@@ -75,21 +77,36 @@ INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
                 ;
 INSTRUCCION::= 
              RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
-             //|tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,null);:} //declarar sin datos
-             //|tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+             |tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright);:} //declarar sin datos
+             |tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
              //|DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
             ; 
 
 
 
 EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}
+|  EXPRESION:a RESTA EXPRESION:b                                {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.RESTA,aleft,aright,a,b);:}
+|  EXPRESION:a MULT EXPRESION:b                                 {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.MULT,aleft,aright,a,b);:}
+|  EXPRESION:a DIV EXPRESION:b                                  {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.DIV,aleft,aright,a,b);:}
+|  EXPRESION:a POTE EXPRESION:b                                 {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.POTE,aleft,aright,a,b);:}
+|  EXPRESION:a MODULO EXPRESION:b                               {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.MODULO,aleft,aright,a,b);:}
 |  DIGITO:a                                                     {:RESULT=new Primitivo(Tipo.tipos.INT,a,aleft,aright);:}
 |  DECIMAL:a                                                    {:RESULT=new Primitivo(Tipo.tipos.DOUBLE,a,aleft,aright);:}
 |  CARACTERES:a                                                 {:RESULT=new Primitivo(Tipo.tipos.CHAR,a,aleft,aright);:}
 |  IDENTIFICADOR: a                                             
 |  PARRAF: a                                                    {:RESULT=new Primitivo(Tipo.tipos.STRING,a,aleft,aright);:}
 |  BOOL: a                                                      {:RESULT=new Primitivo(Tipo.tipos.BOOLEAN,a,aleft,aright);:}
-
+|  PARIZQ EXPRESION:a  PARDER                                   {:RESULT=a;:}  
+| EXPRESION:a MAYORIGUAL EXPRESION:b        {:RESULT=new Relacional( Relacional.OperadorRelacional.MAYORIGUAL, aleft, aright, a, b); :}
+| EXPRESION:a MENORIGUAL EXPRESION:b        {:RESULT=new Relacional( Relacional.OperadorRelacional.MENORIGUAL, aleft, aright, a, b); :}
+| EXPRESION:a IGUAL EXPRESION:b             {:RESULT=new Relacional( Relacional.OperadorRelacional.IGUAL, aleft, aright, a, b); :}
+| EXPRESION:a DIFERENCIA EXPRESION:b        {:RESULT=new Relacional( Relacional.OperadorRelacional.DIFERENCIA, aleft, aright, a, b); :}
+| EXPRESION:a MAYOR EXPRESION:b         {:RESULT=new Relacional( Relacional.OperadorRelacional.MAYOR, aleft, aright, a, b); :}
+| EXPRESION:a MENOR EXPRESION:b         {:RESULT=new Relacional( Relacional.OperadorRelacional.MENOR, aleft, aright, a, b); :}
+| EXPRESION:a OR EXPRESION:b            {:RESULT=new Logica( Logica.OperadorLogico.OR, aleft, aright, a, b); :}
+| EXPRESION:a AND EXPRESION:b           {:RESULT=new Logica( Logica.OperadorLogico.AND, aleft, aright, a, b); :}
+| NOT EXPRESION:a                     {:RESULT=new Logica( Logica.OperadorLogico.NOT, aleft, aright, a); :}
+    
 ;
 
 

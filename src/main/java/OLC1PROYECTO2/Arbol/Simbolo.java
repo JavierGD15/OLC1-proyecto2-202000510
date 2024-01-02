@@ -54,6 +54,8 @@ public class Simbolo {
         this.parametros = parametros; // Java maneja 'null' directamente
         this.listaovector = listavector; // Igual para listaovector
     }
+    
+    
 
   
     public String getId() {

@@ -10,6 +10,7 @@ package OLC1PROYECTO2.Arbol;
  * @author javie
  */
 public class Tipo {
+
     private tipos tipos;
 
     public Tipo(tipos tipos) {
@@ -17,8 +18,12 @@ public class Tipo {
     }
 
     public boolean equals(Tipo obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
         return this.tipos == obj.tipos;
     }
 
@@ -29,12 +34,19 @@ public class Tipo {
     public void setTipo(tipos tipo) {
         this.tipos = tipo;
     }
-    public static enum tipos{
+
+    public static enum tipos {
         INT,
         DOUBLE,
         BOOLEAN,
         CHAR,
         STRING,
-        FUNCION
+        BREAK,
+        FUNCION,
+        METODO,
+        RETORNO,
+        CONTINUE,
+        VECTOR,
+        LISTA
     }
 }

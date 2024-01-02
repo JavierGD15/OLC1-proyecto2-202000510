@@ -5,7 +5,9 @@
  */
 package OLC1PROYECTO2.Arbol;
 
-import OLC1PROYECTO2.Estructuras.Errores;
+import OLC1PROYECTO2.Estructuras.Arbol;
+import OLC1PROYECTO2.Estructuras.Excepcion;
+import OLC1PROYECTO2.Estructuras.NodoAST;
 
 /**
  *
@@ -13,15 +15,23 @@ import OLC1PROYECTO2.Estructuras.Errores;
  */
 public class Declaracion extends Instrucciones {
 
-    Tipo tipoDeclarado;
-    Instrucciones contenido;
-    String nombre;
+    private Tipo tipoDeclarado;
+    private Instrucciones contenido;
+    private String nombre;
 
-    public Declaracion(String nombre, Tipo.tipos tipo, int linea, int columna, Instrucciones contenido) {
-        super(new Tipo(tipo), linea, columna);
+    public Declaracion(String nombre, Tipo.tipos tipoDeclarado, int linea, int columna, Instrucciones contenido) {
+        super(tipoDeclarado, linea, columna);
         this.nombre = nombre;
-        this.tipoDeclarado = new Tipo(tipo);
+        this.tipoDeclarado.setTipo(tipoDeclarado);
         this.contenido = contenido;
+
+    }
+
+    public Declaracion(String nombre, Tipo.tipos tipoDeclarado, int linea, int columna) {
+        super(tipoDeclarado, linea, columna);
+        this.nombre = nombre;
+        this.tipoDeclarado.setTipo(tipoDeclarado);
+
     }
 
     public String getTipoString(Tipo.tipos tipo) {
@@ -42,35 +52,61 @@ public class Declaracion extends Instrucciones {
     }
 
     @Override
-    public Object ejecutar(TablaDeSimbolos table) {
-        boolean opcion = true;
-        
+    public NodoAST getNodo() {
+        NodoAST nodo = new NodoAST("DECLARACION VARIABLE");
+        nodo.agregarHijo(this.getTipoString(this.tipoDeclarado.getTipos()));
+        nodo.agregarHijo(this.nombre);
         if (this.contenido != null) {
-            Simbolo simbolo = new Simbolo(this.tipoDeclarado, this.nombre, this.contenido.ejecutar(table), this.linea, this.columna);
-            opcion = false;
-            if (this.tipoDeclarado.getTipos() == Tipo.tipos.DOUBLE && this.contenido.tipo.getTipos() == Tipo.tipos.INT) {
-                opcion = true;
+            nodo.agregarHijo("=");
+            if (this.contenido instanceof Instrucciones) {
+                nodo.agregarHijoNodo(this.contenido.getNodo());
             } else {
+                nodo.agregarHijo("Error");
+            }
+        }
+        return nodo;
+    }
+
+    @Override
+    public Object ejecutar(Arbol tree, TablaDeSimbolos table) {
+        // VERIFICACION DE QUE LOS TIPOS COINCIDAN
+        boolean opcion = true;
+
+        // Si hay contenido se verifica que este coincida con el tipo declarado
+        if (this.contenido != null) {
+            Simbolo simbolo = new Simbolo(this.tipoDeclarado, this.nombre, this.linea, this.columna, this.contenido.ejecutar(tree, table), null, null);
+            opcion = false;
+
+            // Para parseos automáticos
+            if (this.tipoDeclarado.getTipos() == Tipo.tipos.DOUBLE && this.contenido.getTipo() == Tipo.tipos.INT) {
                 opcion = true;
+            } // Si no se requieren parseos verificar que coincidan los tipos
+            else {
+                if (this.tipoDeclarado.getTipos() != this.contenido.getTipo()) {
+                    new Excepcion("Semántico", "Error en la declaración de los tipos", this.linea, this.columna);
+                } else {
+                    opcion = true;
+                }
             }
 
             if (!opcion) {
-                return new Errores(0, "Semántico", "Error en la declaracion de los tipos", this.linea, this.columna);
-
+                new Excepcion("Semántico", "Error en la declaración de los tipos", this.linea, this.columna);
             }
 
             if (table.setVariable(simbolo)) {
                 return table.getVariable(this.nombre);
             } else {
-                return new Errores(0, "Semántico", "Error en la declaracion de los tipos", this.linea, this.columna);
+                new Excepcion("Semántico", "El identificador de la variable ya existe", this.linea, this.columna);
             }
         } else {
             Simbolo simbolo = new Simbolo(this.tipoDeclarado, this.nombre, this.linea, this.columna, null, null, null);
             if (table.setVariable(simbolo)) {
                 return table.getVariable(this.nombre);
             } else {
-                return new Errores(0, "Semántico", "Error en la declaracion de los tipos", this.linea, this.columna);
+                new Excepcion("Semántico", "El identificador de la variable ya existe", this.linea, this.columna);
             }
         }
+        return null;
     }
+
 }

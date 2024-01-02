@@ -24,7 +24,8 @@ public class Aritmetica extends Instrucciones {
     private Instrucciones opU;
     private Aritmetica.OperadorAritmetico operador;
 
-    public Aritmetica(Aritmetica.OperadorAritmetico operador, int linea, int columna, Instrucciones op1, Instrucciones op2) {
+    public Aritmetica(Aritmetica.OperadorAritmetico operador, int linea, int columna, Instrucciones op1,
+            Instrucciones op2) {
         super(Tipo.tipos.INT, linea, columna);
 
         this.operador = operador;
@@ -95,16 +96,268 @@ public class Aritmetica extends Instrucciones {
         System.out.println("eleccion: " + this.operador);
         switch (this.operador) {
             case DIV:
+                switch (this.op1.getTipo()) {
+                    // SI EL PRIMER TIPO ES UN ENTERO
+                    case INT:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            System.out.println(izquierdo + " " + derecho);
+                            return Integer.parseInt(izquierdo + "") / Integer.parseInt(derecho + "");
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) / Double.parseDouble("" + derecho);
+                        } // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.INT;
+                            return Integer.parseInt("" + izquierdo) / ("" + derecho).charAt(0);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) / Double.parseDouble("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) / Double.parseDouble("" + derecho);
+                        }
+                        // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) / ("" + derecho).charAt(0);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case CHAR:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            return ("" + izquierdo).charAt(0) / Integer.parseInt("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return (double) ("" + izquierdo).charAt(0) / Double.parseDouble("" + derecho);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+
+                        break;
+                    default:
+                        return new Excepcion("Semántico", "Tipo de Operación Erróneo", this.linea, this.columna);
+                }
                 break;
             case MENOSUNARIO:
                 break;
             case MODULO:
+                switch (this.op1.getTipo()) {
+                    // SI EL PRIMER TIPO ES UN ENTERO
+                    case INT:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            System.out.println(izquierdo + " " + derecho);
+
+                            return Integer.parseInt(izquierdo + "") % Integer.parseInt(derecho + "");
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) % Double.parseDouble("" + derecho);
+                        }  else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) % Double.parseDouble("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) % Double.parseDouble("" + derecho);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    default:
+                        return new Excepcion("Semántico", "Tipo de Operación Erróneo", this.linea, this.columna);
+                }
                 break;
             case MULT:
+                switch (this.op1.getTipo()) {
+                    // SI EL PRIMER TIPO ES UN ENTERO
+                    case INT:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+
+                            return Integer.parseInt(izquierdo + "") * Integer.parseInt(derecho + "");
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) * Double.parseDouble("" + derecho);
+                        } // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.INT;
+                            return Integer.parseInt("" + izquierdo) * ("" + derecho).charAt(0);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) * Double.parseDouble("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) * Double.parseDouble("" + derecho);
+                        } // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) * ("" + derecho).charAt(0);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case CHAR:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            return ("" + izquierdo).charAt(0) * Integer.parseInt("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return (double) ("" + izquierdo).charAt(0) * Double.parseDouble("" + derecho);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+
+                        break;
+                    default:
+                        return new Excepcion("Semántico", "Tipo de Operación Erróneo", this.linea, this.columna);
+                }
                 break;
             case POTE:
+                switch (this.op1.getTipo()) {
+                    // SI EL PRIMER TIPO ES UN ENTERO
+                    case INT:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            return Math.pow(Integer.parseInt(izquierdo + ""), Integer.parseInt(derecho + ""));
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Math.pow(Double.parseDouble("" + izquierdo), Double.parseDouble("" + derecho));
+                        } else {
+                            new Excepcion("Semántico", "Operandos erroneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Math.pow(Double.parseDouble("" + izquierdo), Double.parseDouble("" + derecho));
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Math.pow(Double.parseDouble("" + izquierdo), Double.parseDouble("" + derecho));
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    default:
+                        return new Excepcion("Semántico", "Tipo de Operación Erróneo", this.linea, this.columna);
+                }
                 break;
             case RESTA:
+                switch (this.op1.getTipo()) {
+                    // SI EL PRIMER TIPO ES UN ENTERO
+                    case INT:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            System.out.println(izquierdo + " " + derecho);
+
+                            return Integer.parseInt(izquierdo + "") - Integer.parseInt(derecho + "");
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) - Double.parseDouble("" + derecho);
+                        } // TIPO BOOLEAN
+                        else if (this.op2.getTipo() == Tipo.tipos.BOOLEAN) {
+                            this.tipo = Tipo.tipos.INT;
+
+                            int suma = (Boolean) derecho ? 1 : 0;
+                            return Integer.parseInt("" + izquierdo) - suma;
+                        } // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.INT;
+                            return Integer.parseInt("" + izquierdo) - ("" + derecho).charAt(0);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) - Double.parseDouble("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) - Double.parseDouble("" + derecho);
+                        } // TIPO BOOLEAN
+                        else if (this.op2.getTipo() == Tipo.tipos.BOOLEAN) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            double suma = (Boolean) derecho ? 1.0 : 0.0;
+                            return Double.parseDouble("" + izquierdo) - suma;
+                        } // TIPO CARACTER
+                        else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return Double.parseDouble("" + izquierdo) - ("" + derecho).charAt(0);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+                        break;
+                    case BOOLEAN:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            int suma = 0;
+                            if ((Boolean) izquierdo) { // Asumiendo que izquierdo es un valor booleano
+                                suma = 1;
+                            }
+                            return Integer.parseInt("" + derecho) - suma;
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            double suma = 0;
+                            if ((Boolean) izquierdo) { // Asumiendo que izquierdo es un valor booleano
+                                suma = 1.0;
+                            }
+                            return suma - Double.parseDouble("" + derecho);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+
+                        break;
+                    case CHAR:
+                        // SEGUNDO TIPO ENTERO
+                        if (this.op2.getTipo() == Tipo.tipos.INT) {
+                            this.tipo = Tipo.tipos.INT;
+                            return ("" + izquierdo).charAt(0) - Integer.parseInt("" + derecho);
+                        } // TIPO DECIMAL
+                        else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
+                            this.tipo = Tipo.tipos.DOUBLE;
+                            return (double) ("" + izquierdo).charAt(0) - Double.parseDouble("" + derecho);
+                        } else {
+                            new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
+                        }
+
+                        break;
+                    default:
+                        return new Excepcion("Semántico", "Tipo de Operación Erróneo", this.linea, this.columna);
+                }
                 break;
 
             case SUMA:
@@ -116,51 +369,49 @@ public class Aritmetica extends Instrucciones {
                         if (this.op2.getTipo() == Tipo.tipos.INT) {
                             this.tipo = Tipo.tipos.INT;
                             System.out.println(izquierdo + " " + derecho);
-                            
 
-                           
-                            return Integer.parseInt( izquierdo+"") + Integer.parseInt(derecho+"");
+                            return Integer.parseInt(izquierdo + "") + Integer.parseInt(derecho + "");
                         } // TIPO DECIMAL
                         else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
                             this.tipo = Tipo.tipos.DOUBLE;
-                            return Double.parseDouble(""+ izquierdo) + Double.parseDouble(""+ derecho);
+                            return Double.parseDouble("" + izquierdo) + Double.parseDouble("" + derecho);
                         } // TIPO BOOLEAN
                         else if (this.op2.getTipo() == Tipo.tipos.BOOLEAN) {
                             this.tipo = Tipo.tipos.INT;
 
                             int suma = (Boolean) derecho ? 1 : 0;
-                            return Integer.parseInt(""+ izquierdo) + suma;
+                            return Integer.parseInt("" + izquierdo) + suma;
                         } // TIPO CARACTER
                         else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
                             this.tipo = Tipo.tipos.INT;
-                            return Integer.parseInt(""+ izquierdo) + (""+ derecho).charAt(0);
+                            return Integer.parseInt("" + izquierdo) + ("" + derecho).charAt(0);
                         } // TIPO CADENA
                         else if (this.op2.getTipo() == Tipo.tipos.STRING) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         }
                         break;
                     case DOUBLE:
                         if (this.op2.getTipo() == Tipo.tipos.INT) {
                             this.tipo = Tipo.tipos.DOUBLE;
-                            return Double.parseDouble(""+ izquierdo) + Double.parseDouble(""+ derecho);
+                            return Double.parseDouble("" + izquierdo) + Double.parseDouble("" + derecho);
                         } // TIPO DECIMAL
                         else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
                             this.tipo = Tipo.tipos.DOUBLE;
-                            return Double.parseDouble(""+ izquierdo) + Double.parseDouble(""+ derecho);
+                            return Double.parseDouble("" + izquierdo) + Double.parseDouble("" + derecho);
                         } // TIPO BOOLEAN
                         else if (this.op2.getTipo() == Tipo.tipos.BOOLEAN) {
                             this.tipo = Tipo.tipos.DOUBLE;
                             double suma = (Boolean) derecho ? 1.0 : 0.0;
-                            return Double.parseDouble(""+ izquierdo) + suma;
+                            return Double.parseDouble("" + izquierdo) + suma;
                         } // TIPO CARACTER
                         else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
                             this.tipo = Tipo.tipos.DOUBLE;
-                            return Double.parseDouble(""+ izquierdo) + (""+ derecho).charAt(0);
+                            return Double.parseDouble("" + izquierdo) + ("" + derecho).charAt(0);
                         } // TIPO CADENA
                         else if (this.op2.getTipo() == Tipo.tipos.STRING) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } else {
                             new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
                         }
@@ -170,22 +421,23 @@ public class Aritmetica extends Instrucciones {
                         if (this.op2.getTipo() == Tipo.tipos.INT) {
                             this.tipo = Tipo.tipos.INT;
                             int suma = 0;
-                            if ((Boolean) izquierdo) {  // Asumiendo que izquierdo es un valor booleano
+                            if ((Boolean) izquierdo) { // Asumiendo que izquierdo es un valor booleano
                                 suma = 1;
                             }
-                            return Integer.parseInt(""+ derecho) + suma;
+                            return Integer.parseInt("" + derecho) + suma;
                         } // TIPO DECIMAL
                         else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
                             this.tipo = Tipo.tipos.DOUBLE;
                             double suma = 0;
-                            if ((Boolean) izquierdo) {  // Asumiendo que izquierdo es un valor booleano
+                            if ((Boolean) izquierdo) { // Asumiendo que izquierdo es un valor booleano
                                 suma = 1.0;
                             }
-                            return suma + Double.parseDouble(""+ derecho);
+                            return suma + Double.parseDouble("" + derecho);
                         } // TIPO CADENA
                         else if (this.op2.getTipo() == Tipo.tipos.STRING) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";  // Asumiendo que tanto izquierdo como derecho son cadenas
+                            return "" + izquierdo + "" + derecho + " "; // Asumiendo que tanto izquierdo como derecho
+                                                                        // son cadenas
                         } else {
                             new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
                         }
@@ -195,11 +447,11 @@ public class Aritmetica extends Instrucciones {
                         // SEGUNDO TIPO ENTERO
                         if (this.op2.getTipo() == Tipo.tipos.INT) {
                             this.tipo = Tipo.tipos.INT;
-                            return (""+ izquierdo).charAt(0) + Integer.parseInt(""+ derecho);
+                            return ("" + izquierdo).charAt(0) + Integer.parseInt("" + derecho);
                         } // TIPO DECIMAL
                         else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
                             this.tipo = Tipo.tipos.DOUBLE;
-                            return (double) (""+ izquierdo).charAt(0) + Double.parseDouble(""+ derecho);
+                            return (double) ("" + izquierdo).charAt(0) + Double.parseDouble("" + derecho);
                         } // TIPO CARACTER
                         else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
                             this.tipo = Tipo.tipos.CHAR;
@@ -207,7 +459,7 @@ public class Aritmetica extends Instrucciones {
                         } // TIPO CADENA
                         else if (this.op2.getTipo() == Tipo.tipos.STRING) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } else {
                             new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
                         }
@@ -217,23 +469,23 @@ public class Aritmetica extends Instrucciones {
                         // SEGUNDO TIPO ENTERO
                         if (this.op2.getTipo() == Tipo.tipos.INT) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } // TIPO DECIMAL
                         else if (this.op2.getTipo() == Tipo.tipos.DOUBLE) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } // TIPO BOOLEAN
                         else if (this.op2.getTipo() == Tipo.tipos.BOOLEAN) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } // TIPO CARACTER
                         else if (this.op2.getTipo() == Tipo.tipos.CHAR) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } // TIPO CADENA
                         else if (this.op2.getTipo() == Tipo.tipos.STRING) {
                             this.tipo = Tipo.tipos.STRING;
-                            return ""+ izquierdo + ""+ derecho + " ";
+                            return "" + izquierdo + "" + derecho + " ";
                         } else {
                             new Excepcion("Semántico", "Operandos erróneos para +", this.linea, this.columna);
                         }
