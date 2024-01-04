@@ -2,6 +2,7 @@ package OLC1PROYECTO2.Analizadores;
 import java_cup.runtime.Symbol; 
 import java.util.LinkedList;
 import OLC1PROYECTO2.Arbol.Declaracion;
+import OLC1PROYECTO2.Arbol.Asignacion;
 import OLC1PROYECTO2.Arbol.Instrucciones; 
 import OLC1PROYECTO2.Arbol.Imprimir; 
 import OLC1PROYECTO2.Arbol.Tipo;
@@ -14,6 +15,11 @@ import OLC1PROYECTO2.Arbol.InstruccionIfElse;
 import OLC1PROYECTO2.Arbol.InstruccionIfElseIf; 
 import OLC1PROYECTO2.Arbol.InstruccionWhile; 
 import OLC1PROYECTO2.Arbol.Exec; 
+import OLC1PROYECTO2.Arbol.InstruccionFor; 
+import OLC1PROYECTO2.Arbol.InstruccionCase; 
+import OLC1PROYECTO2.Arbol.InstruccionSwitch; 
+import OLC1PROYECTO2.Arbol.InstruccionBreak; 
+import OLC1PROYECTO2.Arbol.InstruccionDoWhile; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Relacional; 
@@ -61,11 +67,22 @@ non terminal Instrucciones INSTRUCCIONWHILE;
 non terminal Instrucciones EXPRESIONDECREMENTO;
 non terminal Instrucciones INCREMENTO;
 non terminal Instrucciones DECREMENTO;
+non terminal Instrucciones DECOASIG;
+non terminal Instrucciones ACTUALIZACION;
+non terminal Instrucciones ASIGNACIONES;
 non terminal LinkedList<Instrucciones> PARAMETROS;
 non terminal LinkedList<Instrucciones> PARAMETROSLLAMADA;
+
+non terminal InstruccionCase DECLARACIONCASE;
+non terminal LinkedList<InstruccionCase> CASELIST;
+non terminal Instrucciones INSTRUCCIONSWITCH;
+non terminal Instrucciones INSTRUCCIONFOR;
+
 non terminal Instrucciones DECLARACIONFUNCIONES;
 non terminal Instrucciones DECLARACIONMETODOS;
 non terminal Instrucciones LLAMADAFUNCIONCOMOEXPRESION;
+non terminal Instrucciones INSTRUCCIONDOWHILE;
+
 non terminal Operacion expresion_numerica;
 non terminal LinkedList<Instrucciones> else_ifs;
 non terminal Operacion expresion_cadena;
@@ -109,6 +126,11 @@ INSTRUCCION::=
             |INSTRUCCIONWHILE:a                        {:RESULT=a;:} 
             | INCREMENTO:a                             {:RESULT=a;:} 
             | DECREMENTO:a                             {:RESULT=a;:} 
+            | INSTRUCCIONSWITCH:a                      {:RESULT=a;:} 
+            | INSTRUCCIONFOR:a                         {:RESULT=a;:}
+            | ASIGNACIONES:a                           {:RESULT=a;:}
+            | INSTRUCCIONDOWHILE:a                           {:RESULT=a;:}
+            | BREAK:a PTCOMA      {:RESULT= new InstruccionBreak(aleft,aright); :}
             | COMENTARIO                          
             ; 
 DEFPRINT::=
@@ -223,4 +245,59 @@ INCREMENTO::= EXPRESION:a INCREMENT PTCOMA {:RESULT=new Incremento(a,aleft, arig
 ;
 
 DECREMENTO::= EXPRESION:a DECREMENT PTCOMA {:RESULT=new Decremento(a,aleft, aright); :}
+;
+
+INSTRUCCIONSWITCH::= 
+    SWITCH PARIZQ EXPRESION:a PARDER
+        LLAVEIZ
+            CASELIST:b
+            DEFAULT DOSPT INSTRUCCIONES:c
+        LLAVEDER                                 {:RESULT = new InstruccionSwitch(a, b, aleft, aright, c);:}
+    | SWITCH PARIZQ EXPRESION:a PARDER
+        LLAVEIZ
+            CASELIST:b
+        LLAVEDER                                {:RESULT = new InstruccionSwitch(a, b, aleft, aright); :}
+    | SWITCH PARIZQ EXPRESION:a PARDER
+        LLAVEIZ
+            DEFAULT DOSPT INSTRUCCIONES:b
+        LLAVEDER                                {:RESULT = new InstruccionSwitch(a, null, aleft, aright,b);:}
+;
+
+CASELIST::=  
+      CASELIST:a DECLARACIONCASE:b                    {:RESULT = a; RESULT.add(b);:}
+     | DECLARACIONCASE:a                            {:RESULT=new LinkedList<InstruccionCase>(); RESULT.add(a); :}
+
+;
+
+DECLARACIONCASE::=  
+        CASE EXPRESION:a DOSPT
+        INSTRUCCIONES:b                    {: RESULT = new InstruccionCase(a,b,aleft,aright);:}
+;
+
+
+INSTRUCCIONFOR::=
+ FOR PARIZQ DECOASIG:b EXPRESION:a PTCOMA ACTUALIZACION:c PARDER 
+      LLAVEIZ
+        INSTRUCCIONES:d
+      LLAVEDER                          {: RESULT = new InstruccionFor(a, b, c, d,aleft,aright); :}
+;
+
+DECOASIG::=
+      DECLARACION:a           {:RESULT=a;:}
+    | ASIGNACIONES:a            {:RESULT=a;:}
+;
+
+ACTUALIZACION::=
+      EXPRESION:a                                        {:RESULT=a;:}
+    | IDENTIFICADOR:a ASIGNACION EXPRESION:b             {: RESULT = new Asignacion(a.toLowerCase(),aleft,aright, b); :}
+;
+
+ASIGNACIONES ::= 
+IDENTIFICADOR:a ASIGNACION EXPRESION:b PTCOMA      {:RESULT = new Asignacion(a.toLowerCase(),aleft,aright, b); :}
+;
+
+INSTRUCCIONDOWHILE::=
+    DO LLAVEIZ
+        INSTRUCCIONES:b
+      LLAVEDER WHILE PARIZQ EXPRESION:a PARDER PTCOMA  {:RESULT = new InstruccionDoWhile(a, b,aleft,aright); :}
 ;

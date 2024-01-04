@@ -48,6 +48,11 @@ public abstract class Instrucciones {
         return vectorLista;
     }
 
+    @Override
+    public String toString() {
+        return "Instrucciones{" + "tipo=" + tipo + ", linea=" + linea + ", columna=" + columna + ", vectorLista=" + vectorLista + '}';
+    }
+
     
     
     

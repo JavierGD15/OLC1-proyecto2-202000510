@@ -45,4 +45,8 @@ public class NodoAST {
     public void setValor(String cadena) {
         this.valor = cadena;
     }
+
+    public ArrayList<NodoAST> getHijos() {
+        return hijos;
+    }
 }

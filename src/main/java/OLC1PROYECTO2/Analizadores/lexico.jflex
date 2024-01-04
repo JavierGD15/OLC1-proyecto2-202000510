@@ -116,14 +116,14 @@ true|false {return new Symbol(sym.BOOL,yyline,yychar, yytext());}
         
 
 \n {yychar=1;}
-
+{IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
 {D} {return new Symbol(sym.DIGITO,yyline,yychar, yytext());}
 {L} {return new Symbol(sym.LETRA,yyline,yychar, yytext());}
 {decimal} {return new Symbol(sym.DECIMAL,yyline,yychar, yytext());}
-{IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
+
 "\" \"" {return new Symbol(sym.ESPACIO,yyline,yychar, yytext());}
-{TEXTO} {return new Symbol(sym.PARRAF,yyline,yychar, yytext());}
-{CARACTERES} {return new Symbol(sym.CARACTERES,yyline,yychar, yytext());}
+{TEXTO} {return new Symbol(sym.PARRAF,yyline,yychar, yytext().replace("\"", ""));}
+{CARACTERES} {return new Symbol(sym.CARACTERES,yyline,yychar, yytext().replace("'", ""));}
 {BLANCOS} {}
 {ESPECIAL} {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
 

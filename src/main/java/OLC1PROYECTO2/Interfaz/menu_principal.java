@@ -8,10 +8,20 @@ package OLC1PROYECTO2.Interfaz;
 import OLC1PROYECTO2.Arbol.Instrucciones;
 import OLC1PROYECTO2.Arbol.TablaDeSimbolos;
 import OLC1PROYECTO2.Estructuras.Arbol;
+import OLC1PROYECTO2.Estructuras.GeneradorAST;
+import OLC1PROYECTO2.Estructuras.NodoAST;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -71,6 +81,11 @@ public class menu_principal extends javax.swing.JFrame {
         jButton2.setText("Reporte de Errores");
 
         jButton3.setText("Generar Árbol AST");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Reporte de Tabla de Símbolos");
 
@@ -84,6 +99,11 @@ public class menu_principal extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Abrir Achivo");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setText("Guardar Archivo");
@@ -150,6 +170,33 @@ public class menu_principal extends javax.swing.JFrame {
         interpretar(jTextArea1.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        JFileChooser chooser = new JFileChooser();
+// Configurar el filtro para archivos .java
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Java Files", "javañ");
+        chooser.setFileFilter(filter);
+
+        chooser.showOpenDialog(null);
+        File archivo = chooser.getSelectedFile();
+        if (archivo != null && archivo.exists()) {
+            try {
+                String ST = new String(Files.readAllBytes(archivo.toPath()));
+                jTextArea1.setText(ST);
+                //analizarLexico(ST);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(menu_principal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(menu_principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            // Manejar la situación en que no se selecciona un archivo o el archivo no existe
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     private static void interpretar(String path) {
         OLC1PROYECTO2.Analizadores.Sintactico pars;
         LinkedList<Instrucciones> AST_arbolSintaxisAbstracta = new LinkedList<>();
@@ -158,6 +205,7 @@ public class menu_principal extends javax.swing.JFrame {
             pars.parse();
             System.out.println(pars.getAST().size());
             AST_arbolSintaxisAbstracta = pars.getAST();
+            
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");
             System.out.println("datos: " + ex);
@@ -187,9 +235,9 @@ public class menu_principal extends javax.swing.JFrame {
             //Si existe un error léxico o sintáctico en cierta instrucción esta
             //será inválida y se cargará como null, por lo tanto no deberá ejecutarse
             //es por esto que se hace esta validación.
-            
+
             if (ins != null) {
-                ins.ejecutar(tree,ts);
+                ins.ejecutar(tree, ts);
             }
         }
     }
