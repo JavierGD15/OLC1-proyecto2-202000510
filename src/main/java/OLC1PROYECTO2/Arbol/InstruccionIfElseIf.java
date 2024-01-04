@@ -12,14 +12,14 @@ package OLC1PROYECTO2.Arbol;
 import OLC1PROYECTO2.Estructuras.Arbol;
 import OLC1PROYECTO2.Estructuras.Excepcion;
 import OLC1PROYECTO2.Estructuras.NodoAST;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class InstruccionIfElseIf extends Instrucciones {
     private Instrucciones condicion;
-    private ArrayList<Instrucciones> listaInstruccionIf;
+    private LinkedList<Instrucciones> listaInstruccionIf;
     private Instrucciones instruccionElseIf;
 
-    public InstruccionIfElseIf(Instrucciones expresion, ArrayList<Instrucciones> listaIf, Instrucciones elseif, int linea, int columna) {
+    public InstruccionIfElseIf(Instrucciones expresion, LinkedList<Instrucciones> listaIf, Instrucciones elseif, int linea, int columna) {
         super(Tipo.tipos.STRING, linea, columna);
         this.condicion = expresion;
         this.listaInstruccionIf = listaIf;

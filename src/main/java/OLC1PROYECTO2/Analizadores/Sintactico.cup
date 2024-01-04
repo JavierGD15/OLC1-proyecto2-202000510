@@ -59,6 +59,8 @@ non terminal Instrucciones EXPRESION;
 non terminal Instrucciones INSTRUCCIONIF;
 non terminal Instrucciones INSTRUCCIONWHILE;
 non terminal Instrucciones EXPRESIONDECREMENTO;
+non terminal Instrucciones INCREMENTO;
+non terminal Instrucciones DECREMENTO;
 non terminal LinkedList<Instrucciones> PARAMETROS;
 non terminal LinkedList<Instrucciones> PARAMETROSLLAMADA;
 non terminal Instrucciones DECLARACIONFUNCIONES;
@@ -96,15 +98,18 @@ INSTRUCCIONES::= INSTRUCCIONES:a INSTRUCCION:b {:RESULT=a; RESULT.add(b);:}
                 | INSTRUCCION :a{:RESULT=new LinkedList<>(); RESULT.add(a);:}
                 ;
 INSTRUCCION::= 
-             DEFPRINT:a {:RESULT=a;:}
-            |DECLARACION:a {:RESULT=a;:}
-            |DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
-            |DECLARACIONMETODOS:a  {:RESULT=a;:}  
-            |INSTRUCCIONRET:a  {:RESULT=a;:} 
-            |LLAMADAFUNCIONCOMOEXPRESION:a PTCOMA  {:RESULT=a;:} 
+             DEFPRINT:a                                {:RESULT=a;:}
+            |DECLARACION:a                             {:RESULT=a;:}
+            |DECLARACIONFUNCIONES:a                    {:RESULT=a;:}  
+            |DECLARACIONMETODOS:a                      {:RESULT=a;:}  
+            |INSTRUCCIONRET:a                          {:RESULT=a;:} 
+            |LLAMADAFUNCIONCOMOEXPRESION:a PTCOMA      {:RESULT=a;:} 
             |EXEC LLAMADAFUNCIONCOMOEXPRESION:a PTCOMA {:RESULT= new Exec(a, aleft,aright); :}
-            |INSTRUCCIONIF:a     {:RESULT=a;:} 
-            |INSTRUCCIONWHILE:a     {:RESULT=a;:} 
+            |INSTRUCCIONIF:a                           {:RESULT=a;:} 
+            |INSTRUCCIONWHILE:a                        {:RESULT=a;:} 
+            | INCREMENTO:a                             {:RESULT=a;:} 
+            | DECREMENTO:a                             {:RESULT=a;:} 
+            | COMENTARIO                          
             ; 
 DEFPRINT::=
 RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
@@ -188,28 +193,34 @@ PARAMETROS::= PARAMETROS:a COMA tipo:b IDENTIFICADOR:c {:RESULT = a; RESULT.add(
                 | tipo:a IDENTIFICADOR:b               {:RESULT=new LinkedList<Instrucciones>(); RESULT.add(new Declaracion(b.toLowerCase(), a,aleft,aright)); 
         :};
 
-INSTRUCCIONIF ::= IF PARIZQ EXPRESION PARDER 
+INSTRUCCIONIF ::= 
+      IF PARIZQ EXPRESION:a PARDER 
         LLAVEIZ 
-            INSTRUCCIONES 
-        LLAVEDER                       {://RESULT = new InstruccionIf($3, $6, @1.first_line, @1.first_column); :}            
-    | IF PARIZQ EXPRESION PARDER 
+            INSTRUCCIONES:b 
+        LLAVEDER                       {:RESULT = new InstruccionIf(a, b, aleft,aright); :}            
+    | IF PARIZQ EXPRESION:a PARDER 
         LLAVEIZ
-            INSTRUCCIONES 
+            INSTRUCCIONES:b 
         LLAVEDER ELSE 
         LLAVEIZ
-            INSTRUCCIONES
-        LLAVEDER                        {://RESULT = new InstruccionIfElse($3, $6, $10, @1.first_line, @1.first_column); :}
-    | IF PARIZQ EXPRESION PARDER 
+            INSTRUCCIONES:c
+        LLAVEDER                        {:RESULT = new InstruccionIfElse(a, b, c, aleft,aright); :}
+    | IF PARIZQ EXPRESION:a PARDER 
         LLAVEIZ 
-            INSTRUCCIONES 
-        LLAVEDER ELSE INSTRUCCIONIF     {://RESULT = new InstruccionIfElseIf($3, $6, $9, @1.first_line, @1.first_column); :}
+            INSTRUCCIONES:b 
+        LLAVEDER ELSE INSTRUCCIONIF:c     {:RESULT = new InstruccionIfElseIf(a, b, c, aleft,aright); :}
 ;
 
 
 INSTRUCCIONWHILE::= WHILE PARIZQ EXPRESION:a PARDER
         LLAVEIZ
             INSTRUCCIONES:b
-        LLAVEDER                        {://RESULT = new InstruccionWhile(a, b,aleft,aright); :}
+        LLAVEDER                        {:RESULT = new InstruccionWhile(a, b,aleft,aright); :}
 ;
 
 
+INCREMENTO::= EXPRESION:a INCREMENT PTCOMA {:RESULT=new Incremento(a,aleft, aright); :}
+;
+
+DECREMENTO::= EXPRESION:a DECREMENT PTCOMA {:RESULT=new Decremento(a,aleft, aright); :}
+;
