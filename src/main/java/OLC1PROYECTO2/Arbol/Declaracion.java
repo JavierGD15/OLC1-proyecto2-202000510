@@ -53,6 +53,10 @@ public class Declaracion extends Instrucciones {
         }
     }
 
+    public void setContenido(Instrucciones contenido) {
+        this.contenido = contenido;
+    }
+
    
 
     @Override

@@ -83,9 +83,37 @@ COMENTARIO    =  ("\/*"([^><]|[^!]">"|"!"[^>]|[^<]"!"|"<"[^!])*"*\/")|(\/\/(.*)*
 ")" {return new Symbol(sym.PARDER,yyline,yychar, yytext());} 
 "?" {return new Symbol(sym.INTERR,yyline,yychar, yytext());} 
 
+"++"                {return new Symbol(sym.INCREMENT,yyline,yychar, yytext());} 
+"--"                {return new Symbol(sym.DECREMENT,yyline,yychar, yytext());} 
+
 //acciones
 "imprimir" {return new Symbol(sym.RIMPRIMIR,yyline,yychar, yytext());}
-true|false {return new Symbol(sym.BOOL,yyline,yychar, yytext());}            
+"retorno"  {return new Symbol(sym.RETORNO,yyline,yychar, yytext());}
+true|false {return new Symbol(sym.BOOL,yyline,yychar, yytext());}    
+"void" {return new Symbol(sym.VOID,yyline,yychar, yytext());}    
+"ejecutar" {return new Symbol(sym.EXEC,yyline,yychar, yytext());}   
+
+//sentencias de control
+//if
+ "si" {return new Symbol(sym.IF,yyline,yychar, yytext());}  
+ "sino" {return new Symbol(sym.ELSE,yyline,yychar, yytext());}  
+
+//switch
+ "selector" {return new Symbol(sym.SWITCH,yyline,yychar, yytext());}  
+ "caso" {return new Symbol(sym.CASE,yyline,yychar, yytext());}  
+ "pordefecto" {return new Symbol(sym.DEFAULT,yyline,yychar, yytext());}  
+ "cortar" {return new Symbol(sym.BREAK,yyline,yychar, yytext());}  
+
+//sentencias ciclicas
+//mientras
+"mientras" {return new Symbol(sym.WHILE,yyline,yychar, yytext());}  
+
+//para
+"para" {return new Symbol(sym.FOR,yyline,yychar, yytext());}  
+
+//Hacer-mientras
+"hacer" {return new Symbol(sym.DO,yyline,yychar, yytext());}  
+        
 
 \n {yychar=1;}
 

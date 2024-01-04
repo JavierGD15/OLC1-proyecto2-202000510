@@ -45,6 +45,8 @@ non terminal Programa;
 non terminal Instrucciones DEFPRINT;
 non terminal Instrucciones DECLARACION;
 non terminal Instrucciones EXPRESION;
+non terminal Instrucciones PARAMETROS;
+non terminal Instrucciones PARAMETRO;
 non terminal Instrucciones DECLARACIONFUNCIONES;
 non terminal Operacion expresion_numerica;
 non terminal LinkedList<Instruccion> else_ifs;
@@ -89,6 +91,20 @@ RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new
 DECLARACION ::= 
               tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright);:} //declarar sin datos
              |tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
+;
+
+DECLARACIONFUNCIONES::=  
+    tipo:a IDENTIFICADOR:b PARIZQ 
+    PARAMETROS:c PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                                              {:RESULT= new DeclaracionFunciones(a, b.toLowerCase(),d,aleft,aright,c);:}                        
+  // |tipo:a IDENTIFICADOR:b PARIZQ PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                             {:RESULT= new DeclaracionFunciones(a, b.toLowerCase(),d,aleft,aright);:}
+;
+
+PARAMETROS::= PARAMETROS:a PARAMETRO:b {:RESULT=a; RESULT.add(b);:}
+                | PARAMETRO :a{:RESULT.add(a);:}
+                ;
+
+PARAMETRO::=                                  
+      tipo:a IDENTIFICADOR:b                         {:RESULT=new Declaracion(b,a,aleft,aright);:}
 ;
 
 EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}

@@ -43,10 +43,16 @@ public class Variable extends Instrucciones {
             if (variable.getListaovector() != null) {
                 this.vectorLista = variable.getListaovector();
             }
-            return variable.getValor();
+            return variable.getValor()+"";
         } else {
             new Excepcion("Semántico", "Referencia a una variable no declarada", this.linea, this.columna);
         }
         return null;
     }
+
+    public String getIdentificador() {
+        return identificador;
+    }
+    
+    
 }

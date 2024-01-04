@@ -12,8 +12,10 @@ public class sym {
   public static final int ESPECIAL = 34;
   public static final int DIFERENCIA = 8;
   public static final int RIMPRIMIR = 41;
+  public static final int INCREMENT = 58;
   public static final int MULT = 18;
   public static final int CHAR = 5;
+  public static final int CASE = 52;
   public static final int LLAVEIZ = 27;
   public static final int DOUBLE = 3;
   public static final int RESTA = 17;
@@ -22,6 +24,8 @@ public class sym {
   public static final int INTERR = 29;
   public static final int INT = 2;
   public static final int DOSPT = 22;
+  public static final int DECREMENT = 59;
+  public static final int FOR = 56;
   public static final int FIN = 23;
   public static final int IDENTIFICADOR = 36;
   public static final int NOT = 15;
@@ -34,7 +38,9 @@ public class sym {
   public static final int ESPACIO = 33;
   public static final int DIV = 19;
   public static final int SUMA = 16;
+  public static final int IF = 49;
   public static final int UMENOS = 44;
+  public static final int RETORNO = 46;
   public static final int MAYORIGUAL = 12;
   public static final int PARIZQ = 42;
   public static final int DECIMAL = 39;
@@ -47,13 +53,21 @@ public class sym {
   public static final int COMENTARIO = 38;
   public static final int MODULO = 21;
   public static final int MENOR = 9;
+  public static final int BREAK = 54;
+  public static final int VOID = 47;
+  public static final int SWITCH = 51;
   public static final int ASIGNACION = 35;
   public static final int MAYOR = 11;
+  public static final int ELSE = 50;
   public static final int PARRAF = 37;
   public static final int SIGNO = 31;
+  public static final int WHILE = 55;
+  public static final int DEFAULT = 53;
   public static final int PTCOMA = 24;
   public static final int STRING = 6;
+  public static final int EXEC = 48;
   public static final int PARDER = 43;
+  public static final int DO = 57;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -100,7 +114,21 @@ public class sym {
   "PARIZQ",
   "PARDER",
   "UMENOS",
-  "BOOL"
+  "BOOL",
+  "RETORNO",
+  "VOID",
+  "EXEC",
+  "IF",
+  "ELSE",
+  "SWITCH",
+  "CASE",
+  "DEFAULT",
+  "BREAK",
+  "WHILE",
+  "FOR",
+  "DO",
+  "INCREMENT",
+  "DECREMENT"
   };
 }
 

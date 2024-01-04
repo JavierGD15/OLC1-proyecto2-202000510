@@ -6,12 +6,21 @@ import OLC1PROYECTO2.Arbol.Instrucciones;
 import OLC1PROYECTO2.Arbol.Imprimir; 
 import OLC1PROYECTO2.Arbol.Tipo;
 import OLC1PROYECTO2.Arbol.DeclaracionFunciones; 
+import OLC1PROYECTO2.Arbol.DeclaracionMetodos; 
 import OLC1PROYECTO2.Arbol.LlamadaFunciones; 
+import OLC1PROYECTO2.Arbol.InstruccionReturn; 
+import OLC1PROYECTO2.Arbol.InstruccionIf; 
+import OLC1PROYECTO2.Arbol.InstruccionIfElse; 
+import OLC1PROYECTO2.Arbol.InstruccionIfElseIf; 
+import OLC1PROYECTO2.Arbol.InstruccionWhile; 
+import OLC1PROYECTO2.Arbol.Exec; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Aritmetica; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Primitivo; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Relacional; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Logica; 
 import OLC1PROYECTO2.Analizadores.Expresiones.Variable; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Incremento; 
+import OLC1PROYECTO2.Analizadores.Expresiones.Decremento; 
 
 parser code{:
     
@@ -38,16 +47,25 @@ terminal String INT,DOUBLE,BOOLEAN, CHAR,STRING, IGUAL, DIFERENCIA, MENOR, MENOR
         MAYOR,  MAYORIGUAL,  OR, AND, NOT, SUMA, RESTA, MULT, DIV, POTE, MODULO,
         DOSPT, FIN, PTCOMA, PT, COMA, LLAVEIZ, LLAVEDER,INTERR,  DIGITO, SIGNO,
         LETRA, ESPACIO, ESPECIAL, ASIGNACION, IDENTIFICADOR, PARRAF, COMENTARIO,
-        DECIMAL, CARACTERES, RIMPRIMIR, PARIZQ,PARDER,UMENOS, BOOL;
+        DECIMAL, CARACTERES, RIMPRIMIR, PARIZQ,PARDER,UMENOS, BOOL, RETORNO, VOID,
+        EXEC,IF,ELSE,SWITCH,CASE,DEFAULT,BREAK,WHILE,FOR,DO,INCREMENT,DECREMENT;
 
 //------> declaracion de no terminales
 non terminal Programa;
 non terminal Instrucciones DEFPRINT;
+non terminal Instrucciones INSTRUCCIONRET;
 non terminal Instrucciones DECLARACION;
 non terminal Instrucciones EXPRESION;
+non terminal Instrucciones INSTRUCCIONIF;
+non terminal Instrucciones INSTRUCCIONWHILE;
+non terminal Instrucciones EXPRESIONDECREMENTO;
+non terminal LinkedList<Instrucciones> PARAMETROS;
+non terminal LinkedList<Instrucciones> PARAMETROSLLAMADA;
 non terminal Instrucciones DECLARACIONFUNCIONES;
+non terminal Instrucciones DECLARACIONMETODOS;
+non terminal Instrucciones LLAMADAFUNCIONCOMOEXPRESION;
 non terminal Operacion expresion_numerica;
-non terminal LinkedList<Instruccion> else_ifs;
+non terminal LinkedList<Instrucciones> else_ifs;
 non terminal Operacion expresion_cadena;
 non terminal Operacion expresion_logica;
 
@@ -81,6 +99,12 @@ INSTRUCCION::=
              DEFPRINT:a {:RESULT=a;:}
             |DECLARACION:a {:RESULT=a;:}
             |DECLARACIONFUNCIONES:a  {:RESULT=a;:}  
+            |DECLARACIONMETODOS:a  {:RESULT=a;:}  
+            |INSTRUCCIONRET:a  {:RESULT=a;:} 
+            |LLAMADAFUNCIONCOMOEXPRESION:a PTCOMA  {:RESULT=a;:} 
+            |EXEC LLAMADAFUNCIONCOMOEXPRESION:a PTCOMA {:RESULT= new Exec(a, aleft,aright); :}
+            |INSTRUCCIONIF:a     {:RESULT=a;:} 
+            |INSTRUCCIONWHILE:a     {:RESULT=a;:} 
             ; 
 DEFPRINT::=
 RIMPRIMIR PARIZQ EXPRESION:a PARDER PTCOMA                          {:RESULT=new Imprimir(a,aleft,aright);:} //imprimir
@@ -90,6 +114,22 @@ DECLARACION ::=
               tipo:a IDENTIFICADOR:b PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright);:} //declarar sin datos
              |tipo:a IDENTIFICADOR:b ASIGNACION EXPRESION:c PTCOMA {:RESULT=new Declaracion(b,a,aleft,aright,c);:} //declarar con datos
 ;
+
+DECLARACIONFUNCIONES::=  
+    tipo:a IDENTIFICADOR:b PARIZQ 
+    PARAMETROS:c PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                                              {:RESULT= new DeclaracionFunciones(a, b.toLowerCase(),d,aleft,aright,c);:}                        
+    |tipo:a IDENTIFICADOR:b PARIZQ PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                            {:RESULT= new DeclaracionFunciones(a, b.toLowerCase(),d,aleft,aright);:}
+;
+
+DECLARACIONMETODOS::=  
+    VOID IDENTIFICADOR:b PARIZQ 
+    PARAMETROS:c PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                                              {:RESULT= new DeclaracionMetodos(b.toLowerCase(),d,bleft,bright,c);:}                        
+    |VOID IDENTIFICADOR:b PARIZQ PARDER LLAVEIZ INSTRUCCIONES:d LLAVEDER                              {:RESULT= new DeclaracionMetodos(b.toLowerCase(),d,bleft,bright);:}
+;
+
+
+
+
 
 EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.SUMA,aleft,aright,a,b);:}
 |  EXPRESION:a RESTA EXPRESION:b                                {:RESULT=new Aritmetica(Aritmetica.OperadorAritmetico.RESTA,aleft,aright,a,b);:}
@@ -113,7 +153,13 @@ EXPRESION::= EXPRESION:a SUMA EXPRESION:b                       {:RESULT=new Ari
 | EXPRESION:a OR EXPRESION:b            {:RESULT=new Logica( Logica.OperadorLogico.OR, aleft, aright, a, b); :}
 | EXPRESION:a AND EXPRESION:b           {:RESULT=new Logica( Logica.OperadorLogico.AND, aleft, aright, a, b); :}
 | NOT EXPRESION:a                     {:RESULT=new Logica( Logica.OperadorLogico.NOT, aleft, aright, a); :}
+| EXPRESIONDECREMENTO:a              {:RESULT=a;:} 
+|LLAMADAFUNCIONCOMOEXPRESION:a        {:RESULT=a;:} 
     
+;
+
+EXPRESIONDECREMENTO::= EXPRESION:a INCREMENT {:RESULT=new Incremento(a, aleft, aright); :}
+    | EXPRESION:a DECREMENT {:RESULT=new Decremento(a, aleft, aright); :}
 ;
 
 
@@ -124,10 +170,46 @@ tipo ::= INT  {:RESULT=Tipo.tipos.INT;:}
        | STRING  {:RESULT=Tipo.tipos.STRING;:}
        ;
 
+INSTRUCCIONRET::= 
+      RETORNO:a PTCOMA                       {:RESULT=new InstruccionReturn(aleft, aright); :}
+    | RETORNO EXPRESION:a PTCOMA           {:RESULT=new InstruccionReturn( aleft, aright, a); :}
+;
 
 
+LLAMADAFUNCIONCOMOEXPRESION::= IDENTIFICADOR:a PARIZQ PARAMETROSLLAMADA:b PARDER {:RESULT=new LlamadaFunciones(a.toLowerCase(), aleft, aright, b);:}
+    | IDENTIFICADOR:a PARIZQ PARDER                   {:RESULT=new LlamadaFunciones(a.toLowerCase(), aleft, aright); :}
+;
+
+PARAMETROSLLAMADA::= PARAMETROSLLAMADA:a COMA EXPRESION:b   {:RESULT = a; RESULT.add(b); :}
+    | EXPRESION:a                          {:RESULT=new LinkedList<Instrucciones>(); RESULT.add(a);:}
+;
+
+PARAMETROS::= PARAMETROS:a COMA tipo:b IDENTIFICADOR:c {:RESULT = a; RESULT.add(new Declaracion(c.toLowerCase(), b,aleft,aright));:}
+                | tipo:a IDENTIFICADOR:b               {:RESULT=new LinkedList<Instrucciones>(); RESULT.add(new Declaracion(b.toLowerCase(), a,aleft,aright)); 
+        :};
+
+INSTRUCCIONIF ::= IF PARIZQ EXPRESION PARDER 
+        LLAVEIZ 
+            INSTRUCCIONES 
+        LLAVEDER                       {://RESULT = new InstruccionIf($3, $6, @1.first_line, @1.first_column); :}            
+    | IF PARIZQ EXPRESION PARDER 
+        LLAVEIZ
+            INSTRUCCIONES 
+        LLAVEDER ELSE 
+        LLAVEIZ
+            INSTRUCCIONES
+        LLAVEDER                        {://RESULT = new InstruccionIfElse($3, $6, $10, @1.first_line, @1.first_column); :}
+    | IF PARIZQ EXPRESION PARDER 
+        LLAVEIZ 
+            INSTRUCCIONES 
+        LLAVEDER ELSE INSTRUCCIONIF     {://RESULT = new InstruccionIfElseIf($3, $6, $9, @1.first_line, @1.first_column); :}
+;
 
 
-
+INSTRUCCIONWHILE::= WHILE PARIZQ EXPRESION:a PARDER
+        LLAVEIZ
+            INSTRUCCIONES:b
+        LLAVEDER                        {://RESULT = new InstruccionWhile(a, b,aleft,aright); :}
+;
 
 

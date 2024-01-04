@@ -64,6 +64,16 @@ public class Simbolo {
         this.valor = valor;
 
     }
+    
+    public Simbolo(Tipo.tipos tipo, String id, int linea, int columna, Object valor, Integer parametros) {
+        this.linea = linea;
+        this.columna = columna;
+        this.tipo = tipo;
+        this.id = id;
+        this.parametros = parametros; // Java maneja 'null' directamente
+        this.valor = valor;
+
+    }
 
     public Simbolo(Tipo.tipos tipo, String id, int linea, int columna) {
         this.linea = linea;
